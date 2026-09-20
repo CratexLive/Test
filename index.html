@@ -15,10 +15,8 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{height:100%;height:-webkit-fill-available;-webkit-text-size-adjust:100%;}
 body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;font-family:'Poppins',-apple-system,BlinkMacSystemFont,sans-serif;}
-
 #player{position:fixed;inset:0;background:#000;user-select:none;-webkit-user-select:none;overflow:hidden;}
 #vid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center center;transition:transform .3s ease,object-fit .2s;}
-
 #overlay{position:absolute;inset:0;z-index:10;background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .4s;}
 #overlay.gone{opacity:0;pointer-events:none;}
 .load-ring{position:relative;width:48px;height:48px;}
@@ -27,27 +25,23 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 .load-ring::after{inset:0;border:3px solid transparent;border-top-color:rgba(255,255,255,.85);animation:rot .7s linear infinite;}
 @keyframes rot{to{transform:rotate(360deg)}}
 .load-label{font-size:12px;color:rgba(255,255,255,.38);letter-spacing:.4px;}
-
 #bufspin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:8;pointer-events:none;display:none;}
 #bufspin div{width:32px;height:32px;border:2.5px solid rgba(255,255,255,.12);border-top-color:rgba(255,255,255,.75);border-radius:50%;animation:rot .65s linear infinite;}
-
 #err-ov{position:absolute;inset:0;z-index:11;background:#0d0d16;display:none;align-items:center;justify-content:center;padding:24px;}
 #err-ov.show{display:flex;}
 .ec{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:44px 28px 36px;max-width:380px;width:100%;text-align:center;}
 .ec .ei-wrap{width:62px;height:62px;border-radius:50%;border:1.5px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
 .ec .ei-wrap svg{width:30px;height:30px;stroke:rgba(255,255,255,.48);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .ec .etxt{font-size:19px;font-weight:700;color:#efefef;margin-bottom:8px;}
-.ec .emsg{font-size:13px;color:rgba(255,255,255,.38);line-height:1.75;margin-bottom:22px;}
+.ec .emsg{font-size:13px;color:rgba(255,255,255,.38);line-height:1.75;margin-bottom:22px;word-break:break-all;}
 .ec .eretry{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:rgba(255,255,255,.32);}
 .retdot{width:6px;height:6px;border-radius:50%;background:#ffcc00;animation:rpulse 1.4s ease-in-out infinite;}
 @keyframes rpulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
-
 #bigplay{position:absolute;inset:0;z-index:16;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .22s;}
 #bigplay.shown{pointer-events:auto;}
 #bigplay.gone{opacity:0;pointer-events:none;}
-.bpbtn{position:relative;width:62px;height:62px;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.06));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.55);box-shadow:0 6px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .18s,background .18s,border-color .18s,box-shadow .18s;}
+.bpbtn{position:relative;width:62px;height:62px;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.06));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.55);box-shadow:0 6px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .bpbtn svg{width:24px;height:24px;margin-left:3px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
-
 #ctrls{position:absolute;bottom:0;left:0;right:0;z-index:20;transition:opacity .28s;}
 #ctrls.gone{opacity:0;pointer-events:none;}
 #prog{margin:0 12px 6px;height:18px;display:flex;align-items:center;cursor:pointer;position:relative;}
@@ -74,7 +68,6 @@ body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;fo
 #social-badges .whatsapp-icon svg{width:14px;height:14px;fill:#fff;}
 </style>
 </head>
-
 <body>
 <div id="player">
   <video id="vid" autoplay="" muted="" playsinline="" preload="metadata"></video>
@@ -290,9 +283,11 @@ async function loadStream(url,fallbacks){
   if(shaka.Player.isBrowserSupported()){
     for(var i=0;i<all.length;i++){
       if(!all[i]) continue;
-      try{await tryShaka(all[i]);lastErr=null;break;}catch(e){lastErr='Error';}
+      try{await tryShaka(all[i]);lastErr=null;break;}catch(e){
+        lastErr='Shaka Error: ' + (e.message || JSON.stringify(e));
+      }
     }
-  }
+  } else {lastErr='Browser not supported';}
   if(lastErr){showErr('Playback Error',lastErr,false);return;}
   vid.muted=true;
   await vid.play().catch(function(){});
@@ -319,16 +314,19 @@ function fetchJSON(url){
 
 function resolve(data){
   var list=Array.isArray(data)?data:(Array.isArray(data.matches)?data.matches:[]);
+  if(!list.length) throw new Error('No matches found in JSON');
   var m=null;
   for(var i=0;i<list.length;i++)if(String(list[i].match_id)===String(matchId)){m=list[i];break;}
-  if(!m)throw new Error('Match not found');
+  if(!m)throw new Error('Match ID "'+matchId+'" not found in JSON');
   var s=m.streams||{};
   var fb=[s.primary,s.fancode_cdn].filter(Boolean);
   if(si===0){
     var as=m.auto_streams||{};
     var keys=Object.keys(as);
+    if(!keys.length) throw new Error('No auto streams available for this match');
     var lang=LANG_MAP[langCode]||keys[0];
     var al=as[lang]||as[keys[0]];
+    if(!al||!al.streams) throw new Error('Streams object missing for language');
     return{type:'multi',streams:al.streams,fallbacks:fb};
   }
   return{type:'single',url:s.fancode_lk_cdn,fallbacks:fb};
@@ -336,12 +334,13 @@ function resolve(data){
 
 (function start(){
   showLoad();
-  if(!matchId){showErr('Missing match ID','',false);return;}
+  if(!matchId){showErr('Missing match ID','URL: ?id=MATCHID_lang',false);return;}
   fetchJSON(JSON_URL).then(function(data){
     var r=resolve(data);
     if(r.type==='multi'){
       qStreams=r.streams;
-      var url=r.streams[DEFAULT_Q]||r.streams['720p']||r.streams['480p'];
+      var url=r.streams[DEFAULT_Q]||r.streams['720p']||r.streams['480p']||r.streams['1080p']||r.streams['360p'];
+      if(!url) throw new Error('No valid stream URL found');
       currentQ=Q_ORDER.find(function(q){return r.streams[q]===url;})||DEFAULT_Q;
       qlbl.textContent=currentQ;
       bq.style.display='';
