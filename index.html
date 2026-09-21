@@ -574,8 +574,27 @@ function playStreamUrl(rawUrl){
     hls.loadSource(targetProxyUrl);
     hls.attachMedia(videoEl);
     currentHls = hls;
+    
+    hls.on(Hls.Events.ERROR, function (event, data) {
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls.recoverMediaError();
+            break;
+          default:
+            videoEl.src = rawUrl;
+            videoEl.play().catch(()=>{});
+            break;
+        }
+      }
+    });
   } else if (videoEl.canPlayType('application/vnd.apple.mpegurl')) {
     videoEl.src = targetProxyUrl;
+  } else {
+    videoEl.src = rawUrl;
   }
 
   videoEl.play().catch(() => {
