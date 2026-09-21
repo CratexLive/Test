@@ -286,7 +286,7 @@ margin-top:6px;
 
 <script>
 const DATA_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
-const PLAYER_URL = 'fc-play.html?data=';
+const PLAYER_URL = 'fc-play.html';
 const container = document.getElementById("matches-container");
 
 let allMatches = [];
@@ -383,8 +383,9 @@ function openQuality(index) {
     btn.className = "quality-item";
     btn.innerText = q;
     btn.onclick = function () {
-      const encoded = btoa(streams[q]);
-      window.location.href = PLAYER_URL + encodeURIComponent(encoded);
+      const encodedUrl = btoa(streams[q]);
+      const matchTitle = encodeURIComponent(match.title || "Live Match");
+      window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encodedUrl)}&title=${matchTitle}&lang=English`;
     };
     list.appendChild(btn);
   });
