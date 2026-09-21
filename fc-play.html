@@ -272,7 +272,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
 
-// Wrap raw stream URL through Cloudflare Worker proxy
 let rawStreamUrl = encoded ? atob(encoded) : "";
 let streamUrl = rawStreamUrl ? window.location.origin + "/?u=" + encodeURIComponent(rawStreamUrl) : "";
 
@@ -345,7 +344,6 @@ async function initPlayer(){
   }
 
   try{
-
     const player = new shaka.Player(video);
     const container = document.querySelector(".shaka-video-container");
     const ui = new shaka.ui.Overlay(player, container, video);
@@ -365,38 +363,44 @@ async function initPlayer(){
       addSeekBar:true
     });
 
+    // Optimized buffering config to prevent infinite loading/buffering
     player.configure({
       streaming:{
-        bufferingGoal:10,
-        rebufferingGoal:2,
-        bufferBehind:30
+        bufferingGoal: 5,
+        rebufferingGoal: 1,
+        bufferBehind: 15,
+        retryParameters: {
+          maxAttempts: 4,
+          baseDelay: 1000,
+          backoffFactor: 2,
+          fuzzFactor: 0.5,
+          timeout: 30000
+        }
       }
     });
 
     await player.load(streamUrl);
 
     video.play().catch(()=>{
-      video.muted=true;
+      video.muted = true;
       video.play();
     });
 
-    video.addEventListener("playing",()=>{
-      loading.style.display="none";
+    video.addEventListener("playing", () => {
+      loading.style.display = "none";
     });
 
-  }
-
-  catch(e){
-
-    console.log("Shaka error:",e);
-
+  } catch(e) {
+    console.log("Shaka error, fallback to native:", e);
+    // Fallback directly to native video tag through proxy if shaka fails
     video.src = streamUrl;
-    video.play();
-
-    video.addEventListener("playing",()=>{
-      loading.style.display="none";
+    video.play().catch(() => {
+      video.muted = true;
+      video.play();
     });
-
+    video.addEventListener("playing", () => {
+      loading.style.display = "none";
+    });
   }
 
 }
