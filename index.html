@@ -22,72 +22,63 @@ button:active, .live-card:active, .match-poster:active, .schedule-line:active, .
   transition: transform 0.1s cubic-bezier(0.16,1,0.3,1);
 }
 
-.ripple{position:absolute;background:rgba(255,255,255,0.35);border-radius:50%;transform:scale(0);animation:rippleAnim 0.5s linear;pointer-events:none;}
-@keyframes rippleAnim{to{transform:scale(4);opacity:0;}}
-
 @keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 @keyframes scaleIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
 .stagger-card{animation:fadeInUp 0.5s cubic-bezier(0.16,1,0.3,1) forwards;}
-<style>
-.startup-tg-overlay{position:fixed;z-index:999999;inset:0;background:rgba(6,7,5,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s cubic-bezier(0.16,1,0.3,1);}
+
+.startup-tg-overlay{position:fixed;z-index:999999;inset:0;background:rgba(6,7,5,.88);backdrop-filter:blur(24px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.4s;}
 .startup-tg-overlay.show{opacity:1;pointer-events:all;}
-.startup-tg-box{background:var(--black2);border:1px solid rgba(216,255,62,0.25);border-radius:24px;padding:36px;width:min(440px, 90%);text-align:center;box-shadow:0 40px 100px rgba(0,0,0,0.8), 0 0 40px rgba(216,255,62,0.1);transform:scale(0.9) translateY(20px);transition:transform 0.4s cubic-bezier(0.16,1,0.3,1);}
+.startup-tg-box{background:var(--black2);border:1px solid rgba(216,255,62,0.25);border-radius:24px;padding:36px;width:min(440px, 90%);text-align:center;box-shadow:0 40px 100px rgba(0,0,0,0.8);transform:scale(0.9) translateY(20px);transition:transform 0.4s;}
 .startup-tg-overlay.show .startup-tg-box{transform:scale(1) translateY(0);}
-.startup-tg-icon{width:64px;height:64px;margin:0 auto 20px;background:rgba(216,255,62,0.08);border:1px solid rgba(216,255,62,0.2);border-radius:50%;display:grid;place-items:center;box-shadow:0 0 20px rgba(216,255,62,0.15);}
+.startup-tg-icon{width:64px;height:64px;margin:0 auto 20px;background:rgba(216,255,62,0.08);border:1px solid rgba(216,255,62,0.2);border-radius:50%;display:grid;place-items:center;}
 .startup-tg-icon svg{width:28px;height:28px;fill:var(--lime);}
-.startup-tg-title{font-family:"Space Grotesk";font-size:26px;font-weight:700;letter-spacing:-1px;color:var(--cream);margin-bottom:10px;}
+.startup-tg-title{font-family:"Space Grotesk";font-size:26px;font-weight:700;color:var(--cream);margin-bottom:10px;}
 .startup-tg-desc{font-family:"DM Sans";font-size:11px;color:var(--soft);line-height:1.6;margin-bottom:28px;}
 .startup-tg-btn-main{height:50px;width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--lime);color:var(--black);font-family:"Space Grotesk";font-size:9.5px;font-weight:800;letter-spacing:1.5px;border-radius:12px;text-decoration:none;text-transform:uppercase;transition:.3s;box-shadow:0 10px 30px var(--lime-glow);}
-.startup-tg-btn-main:hover{background:#e8ff78;transform:translateY(-2px);box-shadow:0 15px 35px rgba(216,255,62,0.5);}
-.startup-tg-btn-sub{margin-top:16px;background:none;border:0;color:#777970;font-family:"DM Sans";font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:.3s;padding:8px;}
+.startup-tg-btn-sub{margin-top:16px;background:none;border:0;color:#777970;font-family:"DM Sans";font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;padding:8px;}
 .startup-tg-btn-sub:hover{color:var(--cream);}
 
-.nav{position:fixed;z-index:700;top:0;left:0;right:0;height:76px;display:flex;align-items:center;padding:0 34px;transition:all .4s cubic-bezier(0.16,1,0.3,1);}
+.nav{position:fixed;z-index:700;top:0;left:0;right:0;height:76px;display:flex;align-items:center;padding:0 34px;transition:all .4s;}
 .nav.scrolled{background:rgba(6,7,5,.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,0.6);}
 .nav-inner{width:min(1500px,100%);margin:auto;display:flex;align-items:center;}
-.brand{display:flex;align-items:center;gap:10px;cursor:pointer;transition:transform .3s ease;}
-.brand:hover{transform:scale(1.02);}
-.brand-symbol{width:30px;height:30px;position:relative;background:var(--lime);transform:rotate(45deg);border-radius:4px;box-shadow:0 0 15px var(--lime-glow);}
-.brand-symbol:after{content:"";position:absolute;width:8px;height:8px;left:11px;top:11px;background:var(--black);border-radius:2px;}
-.brand-name{font-family:"Space Grotesk";font-size:14px;font-weight:700;letter-spacing:-.5px;}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer;}
+.brand-symbol{width:30px;height:30px;position:relative;background:var(--lime);transform:rotate(45deg);border-radius:4px;}
+.brand-name{font-family:"Space Grotesk";font-size:14px;font-weight:700;}
 .nav-links{display:flex;gap:4px;margin-left:52px;}
 .nav-links button{position:relative;color:#77786f;background:none;padding:9px 14px;font-size:9px;letter-spacing:1.3px;font-weight:700;transition:.3s;border-radius:6px;}
-.nav-links button:after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--lime);transform:scaleX(0);transition:.3s cubic-bezier(0.16,1,0.3,1);border-radius:2px;}
+.nav-links button:after{content:"";position:absolute;left:14px;right:14px;bottom:4px;height:2px;background:var(--lime);transform:scaleX(0);transition:.3s;}
 .nav-links button:hover,.nav-links button.active{color:var(--cream);background:rgba(255,255,255,0.03);}
 .nav-links button.active:after{transform:scaleX(1);}
 .nav-right{margin-left:auto;display:flex;gap:8px;}
 .nav-icon{width:38px;height:38px;display:grid;place-items:center;color:var(--cream);background:rgba(242,239,228,.04);border:1px solid var(--line);border-radius:10px;transition:.3s;}
-.nav-icon:hover{color:var(--lime);border-color:rgba(216,255,62,.4);transform:translateY(-2px);}
+.nav-icon:hover{color:var(--lime);border-color:rgba(216,255,62,.4);}
 .nav-icon svg{width:15px;}
 </style>
 <style>
 .hero{height:94vh;min-height:670px;position:relative;overflow:hidden;}
-.hero-slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.2s cubic-bezier(0.16,1,0.3,1);}
+.hero-slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 1.2s;}
 .hero-slide.active{opacity:1;pointer-events:auto;}
-.hero-art{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-color:var(--black);background-position:center;transition:transform 9s cubic-bezier(.16,1,.3,1);}
+.hero-art{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform 9s;}
 .hero-slide.active .hero-art{transform:scale(1);}
 .hero-art:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,7,5,.98) 0%,rgba(6,7,5,.88) 25%,rgba(6,7,5,.35) 60%,rgba(6,7,5,.6) 100%),linear-gradient(0deg,var(--black) 0%,transparent 45%);}
 .hero-copy{position:absolute;z-index:5;left:max(34px,calc((100% - 1500px)/2));bottom:125px;width:min(720px,65%);}
 .hero-eyebrow{display:flex;align-items:center;gap:9px;color:var(--lime);font-size:8px;letter-spacing:2px;font-weight:700;}
-.live-signal{width:8px;height:8px;background:var(--lime);border-radius:50%;box-shadow:0 0 0 0 rgba(216,255,62,0.7);animation:pulseRing 1.8s cubic-bezier(0.4,0,0.6,1) infinite;}
+.live-signal{width:8px;height:8px;background:var(--lime);border-radius:50%;box-shadow:0 0 0 0 rgba(216,255,62,0.7);animation:pulseRing 1.8s infinite;}
 @keyframes pulseRing{0%{transform:scale(0.95);box-shadow:0 0 0 0 rgba(216,255,62,0.7);}70%{transform:scale(1);box-shadow:0 0 0 10px rgba(216,255,62,0);}}
 .hero-title{margin-top:18px;max-width:800px;font-family:"Space Grotesk";font-size:clamp(52px,7.4vw,112px);line-height:.86;letter-spacing:-6px;font-weight:700;}
 .hero-meta{display:flex;align-items:center;flex-wrap:wrap;gap:11px;margin-top:21px;color:var(--soft);font-size:9px;}
 .hero-meta b{color:var(--cream);}
 .hero-meta i{width:3px;height:3px;background:#4e5049;border-radius:50%;}
-.hero-match{margin-top:13px;display:flex;align-items:center;gap:12px;font-family:"Space Grotesk";font-size:11px;font-weight:700;}
-.hero-match .vs{color:#5b5d56;font-size:7px;}
 .hero-actions{display:flex;gap:10px;margin-top:28px;}
-.watch{height:46px;display:flex;align-items:center;gap:10px;padding:0 22px;color:var(--black);background:var(--lime);font-size:8px;font-weight:800;letter-spacing:.5px;border-radius:10px;transition:.3s cubic-bezier(0.16,1,0.3,1);}
+.watch{height:46px;display:flex;align-items:center;gap:10px;padding:0 22px;color:var(--black);background:var(--lime);font-size:8px;font-weight:800;letter-spacing:.5px;border-radius:10px;transition:.3s;}
 .watch:hover{background:#e8ff78;transform:translateY(-3px);box-shadow:0 12px 30px var(--lime-glow);}
 .watch svg{width:12px;}
 .info{height:46px;padding:0 18px;color:var(--cream);background:rgba(242,239,228,.06);border:1px solid rgba(242,239,228,.15);font-size:8px;font-weight:700;border-radius:10px;transition:.3s;}
 .info:hover{background:rgba(242,239,228,.12);border-color:rgba(242,239,228,.3);}
 .hero-progress{position:absolute;z-index:8;bottom:53px;left:max(34px,calc((100% - 1500px)/2));display:flex;gap:6px;}
-.hero-progress span{width:24px;height:3px;background:rgba(242,239,228,.2);border-radius:2px;transition:.4s cubic-bezier(0.16,1,0.3,1);}
+.hero-progress span{width:24px;height:3px;background:rgba(242,239,228,.2);border-radius:2px;transition:.4s;}
 .hero-progress span.active{width:60px;background:var(--lime);box-shadow:0 0 10px var(--lime-glow);}
-</style>
-<style>
+
 .content{position:relative;z-index:20;margin-top:-55px;padding-bottom:140px;}
 .wrap{width:min(1500px,calc(100% - 68px));margin:auto;}
 .section{margin-bottom:75px;}
@@ -97,42 +88,43 @@ button:active, .live-card:active, .match-poster:active, .schedule-line:active, .
 .section-action{color:#777970;background:none;font-size:8px;font-weight:700;transition:.3s;}
 .section-action:hover{color:var(--lime);transform:translateX(3px);}
 .live-rail{display:flex;gap:16px;overflow-x:auto;padding:6px 2px 18px;}
-.live-card, .match-poster{flex:0 0 360px;height:210px;position:relative;overflow:hidden;background:var(--black2);cursor:pointer;border:1px solid var(--line);border-radius:16px;transition:.3s cubic-bezier(0.16,1,0.3,1);}
+.live-card, .match-poster{flex:0 0 360px;height:210px;position:relative;overflow:hidden;background:var(--black2);cursor:pointer;border:1px solid var(--line);border-radius:16px;transition:.3s;}
 .live-card:hover, .match-poster:hover{transform:translateY(-6px);border-color:rgba(216,255,62,.35);box-shadow:0 20px 40px rgba(0,0,0,.6);}
-.live-art, .poster-art{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-color:var(--black);background-position:center;transition:.6s cubic-bezier(0.16,1,0.3,1);}
+.live-art, .poster-art{position:absolute;inset:0;background-size:cover;background-position:center;transition:.6s;}
 .live-card:hover .live-art, .match-poster:hover .poster-art{transform:scale(1.06);}
 .live-art:after, .poster-art:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(6,7,5,.96) 10%,rgba(6,7,5,.1) 75%);}
 .live-index{position:absolute;z-index:3;top:16px;left:16px;color:var(--lime);font-family:"Space Grotesk";font-size:10px;font-weight:700;}
-.live-mark{position:absolute;z-index:3;top:16px;right:16px;display:flex;align-items:center;gap:6px;color:var(--lime);font-size:7px;font-weight:800;letter-spacing:1px;background:rgba(6,7,5,.6);padding:4px 10px;border-radius:20px;backdrop-filter:blur(8px);border:1px solid rgba(216,255,62,.2);}
+.live-mark{position:absolute;z-index:3;top:16px;right:16px;display:flex;align-items:center;gap:6px;color:var(--lime);font-size:7px;font-weight:800;letter-spacing:1px;background:rgba(6,7,5,.6);padding:4px 10px;border-radius:20px;border:1px solid rgba(216,255,62,.2);}
 .live-mark:before{content:"";width:5px;height:5px;background:var(--lime);border-radius:50%;box-shadow:0 0 8px var(--lime);}
 .live-info{position:absolute;z-index:3;left:18px;right:18px;bottom:16px;}
 .live-league{color:#7e8078;font-size:7px;letter-spacing:.5px;}
 .live-name{margin-top:5px;font-family:"Space Grotesk";font-size:14px;font-weight:700;}
+
 .world-grid{display:grid;grid-template-columns:1.8fr 1fr 1fr;gap:16px;}
-.world-card{height:250px;position:relative;overflow:hidden;background:var(--black2);cursor:pointer;border:1px solid var(--line);border-radius:16px;transition:.3s cubic-bezier(0.16,1,0.3,1);}
+.world-card{height:250px;position:relative;overflow:hidden;background:var(--black2);cursor:pointer;border:1px solid var(--line);border-radius:16px;transition:.3s;}
 .world-card.large{height:300px;}
 .world-card:hover{transform:translateY(-6px);border-color:rgba(216,255,62,.35);box-shadow:0 20px 40px rgba(0,0,0,.6);}
-.world-art{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-color:var(--black);background-position:center;transition:.7s cubic-bezier(0.16,1,0.3,1);}
+.world-art{position:absolute;inset:0;background-size:cover;background-position:center;transition:.7s;}
 .world-card:hover .world-art{transform:scale(1.06);}
 .world-art:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,var(--black),transparent 70%);}
 .world-copy{position:absolute;z-index:4;left:22px;bottom:20px;}
 .world-number{color:var(--lime);font-family:"Space Grotesk";font-size:8px;font-weight:700;}
 .world-name{margin-top:5px;font-family:"Space Grotesk";font-size:32px;letter-spacing:-2px;font-weight:700;}
 .large .world-name{font-size:46px;}
+
 .schedule{border-top:1px solid var(--line);width:100%;}
 .schedule-line{min-height:110px;display:grid;grid-template-columns:110px 80px 1fr 110px;align-items:center;gap:22px;border-bottom:1px solid var(--line);cursor:pointer;transition:all 0.25s ease;padding:14px 18px;border-radius:14px;width:100%;}
 .schedule-line:hover{background:rgba(216,255,62,.03);transform:translateX(4px);}
 .schedule-date{color:#8b8d84;font-size:9.5px;line-height:1.5;font-weight:600;}
 .schedule-date b{color:var(--cream);font-size:10px;}
-.schedule-thumb{width:80px;height:52px;border-radius:10px;background-size:cover;background-repeat:no-repeat;background-color:var(--black);background-position:center;border:1px solid var(--line);flex-shrink:0;}
-.schedule-match{font-family:"Space Grotesk";font-size:15px;font-weight:700;color:var(--cream);letter-spacing:-0.2px;}
-.schedule-vs{margin:0 8px;color:var(--lime);font-size:9px;font-weight:800;}
+.schedule-thumb{width:80px;height:52px;border-radius:10px;background-size:cover;background-position:center;border:1px solid var(--line);flex-shrink:0;}
+.schedule-match{font-family:"Space Grotesk";font-size:15px;font-weight:700;color:var(--cream);}
 .schedule-league{margin-top:5px;color:#9a9c94;font-size:9px;letter-spacing:0.8px;font-weight:600;text-transform:uppercase;}
 .schedule-state{justify-self:end;color:#8b8d84;font-size:8px;font-weight:800;letter-spacing:1px;padding:6px 14px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--line);}
 .schedule-state.live{color:var(--lime);background:rgba(216,255,62,.08);border-color:rgba(216,255,62,0.3);}
 </style>
 <style>
-.page{display:none;min-height:100vh;opacity:0;transform:translateY(12px) scale(0.98);transition:opacity 0.35s cubic-bezier(0.16,1,0.3,1),transform 0.35s cubic-bezier(0.16,1,0.3,1);}
+.page{display:none;min-height:100vh;opacity:0;transform:translateY(12px) scale(0.98);transition:opacity 0.35s,transform 0.35s;}
 .page.active{display:block;opacity:1;transform:translateY(0) scale(1);}
 .inner{padding-top:125px;padding-bottom:150px;}
 .back{color:#64665f;background:none;font-size:8px;font-weight:700;letter-spacing:1px;margin-bottom:29px;transition:.3s;}
@@ -140,30 +132,31 @@ button:active, .live-card:active, .match-poster:active, .schedule-line:active, .
 .page-title{font-family:"Space Grotesk";font-size:clamp(65px,9vw,130px);line-height:.8;letter-spacing:-8px;}
 .page-subtitle{margin-top:14px;color:#65675f;font-size:9px;}
 .match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;}
-.match-poster{height:310px;}
+.match-poster{height:310px;position:relative;overflow:hidden;background:var(--black2);cursor:pointer;border:1px solid var(--line);border-radius:16px;transition:.3s;}
 .poster-top{position:absolute;z-index:3;top:16px;left:16px;right:16px;display:flex;justify-content:space-between;align-items:center;}
-.poster-status{color:var(--lime);font-size:7px;font-weight:800;letter-spacing:1px;background:rgba(6,7,5,.6);padding:4px 10px;border-radius:20px;backdrop-filter:blur(6px);border:1px solid rgba(216,255,62,.2);}
+.poster-status{color:var(--lime);font-size:7px;font-weight:800;letter-spacing:1px;background:rgba(6,7,5,.6);padding:4px 10px;border-radius:20px;border:1px solid rgba(216,255,62,.2);}
 .poster-sport{color:#888a82;font-size:7px;}
 .poster-copy{position:absolute;z-index:4;left:18px;right:18px;bottom:18px;}
 .poster-league{color:#666961;font-size:7px;}
 .poster-title{margin-top:5px;font-family:"Space Grotesk";font-size:13px;line-height:1.2;font-weight:700;}
+
 .match-layer{position:fixed;z-index:1100;inset:0;display:none;overflow:auto;background:var(--black);}
 .match-layer.open{display:block;animation:scaleIn .3s cubic-bezier(0.16,1,0.3,1);}
 .match-hero{min-height:65vh;position:relative;overflow:hidden;}
-.match-background{position:absolute;inset:0;background-size:cover;background-repeat:no-repeat;background-color:var(--black);background-position:center;}.match-background:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,7,5,.97),rgba(6,7,5,.5),rgba(6,7,5,.8)),linear-gradient(0deg,var(--black),transparent 70%);}
+.match-background{position:absolute;inset:0;background-size:cover;background-position:center;}
+.match-background:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,7,5,.97),rgba(6,7,5,.5),rgba(6,7,5,.8)),linear-gradient(0deg,var(--black),transparent 70%);}
 .match-close{position:absolute;z-index:10;top:25px;right:30px;width:44px;height:44px;color:var(--cream);background:rgba(6,7,5,.6);border:1px solid var(--line);border-radius:50%;cursor:pointer;transition:.3s;display:grid;place-items:center;font-size:18px;}
-.match-close:hover{background:var(--lime);color:var(--black);border-color:var(--lime);transform:rotate(90deg);}
+.match-close:hover{background:var(--lime);color:var(--black);transform:rotate(90deg);}
 .match-detail{position:absolute;z-index:5;left:max(34px,calc((100% - 1500px)/2));right:34px;bottom:80px;}
 .match-live{color:var(--lime);font-size:8px;font-weight:800;letter-spacing:2px;}
 .match-heading{max-width:950px;margin-top:16px;font-family:"Space Grotesk";font-size:clamp(45px,6vw,88px);line-height:.85;letter-spacing:-5px;}
 .match-info{margin-top:18px;color:#8b8d84;font-size:9px;}
-.match-teams{display:flex;align-items:center;gap:16px;margin-top:19px;font-family:"Space Grotesk";font-size:12px;font-weight:700;}
-.match-teams .vs{color:#53564e;font-size:7px;}
 .match-bottom{width:min(1500px,calc(100% - 68px));margin:0 auto;padding:35px 0 100px;}
 .access-box{max-width:700px;padding:25px 0;border-top:1px solid var(--line);}
 .access-label{color:var(--lime);font-size:7px;font-weight:800;letter-spacing:1.5px;}
 .access-title{margin-top:8px;font-family:"Space Grotesk";font-size:25px;}
 .access-text{margin-top:7px;color:#696b64;font-size:9px;line-height:1.6;}
+
 .player-modal-wrapper{position:fixed;z-index:99999;inset:0;width:100vw;height:100vh;background:var(--black);display:flex;flex-direction:column;justify-content:flex-start;overflow-y:auto;animation:scaleIn .3s cubic-bezier(0.16,1,0.3,1);padding-bottom:60px;}
 .player-top-nav{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;background:rgba(6,7,5,.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;}
 .player-top-brand{font-family:"Space Grotesk";font-size:14px;font-weight:700;color:var(--cream);letter-spacing:-.5px;}
@@ -171,7 +164,6 @@ button:active, .live-card:active, .match-poster:active, .schedule-line:active, .
 .player-close-action:hover{background:var(--lime);color:var(--black);border-color:var(--lime);}
 .player-content-body{width:min(1300px,calc(100% - 48px));margin:30px auto 0;display:flex;flex-direction:column;gap:24px;}
 .player-rig-box{width:100%;aspect-ratio:16/9;position:relative;background:#000;overflow:hidden;border-radius:18px;border:1px solid rgba(216,255,62,0.3);box-shadow:0 30px 80px rgba(0,0,0,0.8);isolation:isolate;}
-.player-rig-box::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,transparent,var(--lime),transparent);opacity:.9;z-index:12;pointer-events:none;}
 iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:relative;z-index:5;border-radius:inherit;}
 .player-rig-box.fs-active{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;z-index:9999999!important;border-radius:0!important;border:none!important;transform:none!important;background:#000!important;}
 .player-meta-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:4px 0;flex-wrap:wrap;}
@@ -179,50 +171,35 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
 .stream-title-group strong{font-family:"Space Grotesk";font-size:22px;font-weight:700;color:var(--cream);letter-spacing:-.5px;}
 .stream-title-group span{font-family:"Space Grotesk";color:var(--soft);font-size:9px;letter-spacing:1.5px;font-weight:700;text-transform:uppercase;}
 .share-action-btn{height:44px;padding:0 26px;display:inline-flex;align-items:center;gap:8px;border-radius:100px;background:rgba(242,239,228,.04);border:1px solid rgba(216,255,62,0.3);color:var(--cream);font-family:"Space Grotesk";font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(16px);transition:.3s ease;}
-.share-action-btn svg{width:14px;height:14px;stroke:var(--lime);stroke-width:2.2;transition:stroke .3s;}
 .share-action-btn:hover{background:var(--lime);color:var(--black);border-color:var(--lime);box-shadow:0 10px 30px var(--lime-glow);transform:translateY(-2px);}
-.share-action-btn:hover svg{stroke:var(--black);}
 .player-community-card{margin-top:20px;background:var(--black2);border:1px solid var(--line);border-radius:20px;padding:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
 .player-comm-title{font-family:"Space Grotesk";font-size:28px;font-weight:700;letter-spacing:-1px;}
 .player-comm-title span{color:var(--soft);}
 .comm-join-btn{height:46px;padding:0 28px;background:var(--lime);color:var(--black);font-family:"Space Grotesk";font-size:9px;font-weight:800;letter-spacing:1px;border-radius:100px;text-decoration:none;display:inline-flex;align-items:center;transition:.3s;}
 .comm-join-btn:hover{background:#e8ff78;transform:translateY(-2px);box-shadow:0 10px 25px var(--lime-glow);}
-.tg-modal-overlay{position:fixed;inset:0;background:rgba(6,7,5,.92);backdrop-filter:blur(24px);z-index:999999;display:flex;justify-content:center;align-items:center;opacity:0;pointer-events:none;transition:.3s cubic-bezier(0.16,1,0.3,1);}
-.tg-modal-overlay.show{opacity:1;pointer-events:all;}
-.tg-modal-box{background:var(--cream);color:var(--black);border-radius:20px;padding:36px;text-align:center;max-width:440px;width:90%;box-shadow:0 40px 120px rgba(0,0,0,.7);animation:scaleIn .3s cubic-bezier(0.16,1,0.3,1);}
-.tg-modal-title{font-family:'Space Grotesk';font-size:31px;font-weight:700;margin-bottom:12px;}
-.tg-modal-desc{font-size:10px;color:#676960;line-height:1.7;margin-bottom:25px;}
-.tg-modal-btn-join{display:flex;align-items:center;justify-content:center;height:50px;width:100%;background:var(--black);color:var(--cream);border-radius:12px;font-family:'Space Grotesk';font-size:8px;font-weight:800;letter-spacing:.7px;text-decoration:none;transition:.3s;}
-.tg-modal-btn-join:hover{color:var(--lime);transform:translateY(-2px);}
+
 .search{position:fixed;z-index:1500;inset:0;display:none;background:rgba(6,7,5,.97);backdrop-filter:blur(30px);}
-.search.open{display:block;animation:scaleIn .25s cubic-bezier(0.16,1,0.3,1);}
+.search.open{display:block;animation:scaleIn .25s;}
 .search-inner{width:min(1100px,calc(100% - 68px));margin:130px auto;}
-.search-close{color:#666860;background:none;font-size:8px;font-weight:800;letter-spacing:1px;margin-bottom:35px;transition:.3s;}
-.search-close:hover{color:var(--lime);transform:translateX(-4px);}
+.search-close{color:#666860;background:none;font-size:8px;font-weight:800;letter-spacing:1px;margin-bottom:35px;}
+.search-close:hover{color:var(--lime);}
 .search-input{width:100%;padding-bottom:20px;color:var(--cream);background:none;outline:0;border:0;border-bottom:1px solid var(--line);font-family:"Space Grotesk";font-size:clamp(40px,6vw,80px);letter-spacing:-4px;}
 .search-results{margin-top:30px;}
 .mobile-nav{display:none;}
+
 @media(max-width:900px){
   .nav{padding:0 18px;}
   .nav-links{display:none;}
   .wrap{width:calc(100% - 36px);}
   .hero-copy{left:18px;right:18px;bottom:115px;width:auto;}
   .hero-title{font-size:46px;letter-spacing:-3px;}
-  .hero-art:after{background:linear-gradient(0deg,var(--black) 4%,rgba(6,7,5,.08) 72%),linear-gradient(90deg,rgba(6,7,5,.55),transparent);}
-  .hero-progress{left:18px;bottom:57px;}
-  .content{margin-top:-35px;}
-  .world-grid{grid-template-columns:1fr 1fr;}
-  .world-card.large{grid-column:1/-1;height:240px;}
-  .world-card{height:180px;}
-  .large .world-name{font-size:34px;}
-  .world-name{font-size:23px;}
   .match-grid{grid-template-columns:repeat(2,1fr);gap:12px;}
   .match-poster{height:210px;}
   .schedule-line{grid-template-columns:65px 50px 1fr;gap:12px;}
   .schedule-thumb{width:50px;height:36px;}
   .schedule-state{display:none;}
-  .mobile-nav{position:fixed;z-index:800;display:flex;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));height:62px;align-items:center;justify-content:space-around;background:rgba(15,17,13,.92);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(24px);box-shadow:0 15px 35px rgba(0,0,0,.6);}
-  .mobile-nav button{color:#64665f;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:7px;font-weight:700;transition:.3s;}
+  .mobile-nav{position:fixed;z-index:800;display:flex;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));height:62px;align-items:center;justify-content:space-around;background:rgba(15,17,13,.92);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(24px);}
+  .mobile-nav button{color:#64665f;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:7px;font-weight:700;}
   .mobile-nav button.active{color:var(--lime);}
   .mobile-nav svg{width:15px;}
   .player-content-body{width:calc(100% - 24px);margin-top:20px;}
@@ -230,8 +207,6 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
   .player-comm-title{font-size:20px;}
 }
 </style>
-<style type="text/css">* {user-select: auto !important; -webkit-user-select: auto !important;}</style>
-</head>
 <body>
 <div class="startup-tg-overlay" id="startupTgModal">
   <div class="startup-tg-box">
@@ -269,50 +244,26 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
 </header>
 
 <main id="home" class="page active">
-  <section class="hero" id="hero">
-    <article class="hero-slide active">
-      <div class="hero-art" style="background-image:url('https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg')"></div>
-      <div class="hero-copy">
-        <div class="hero-eyebrow"><span class="live-signal"></span>LIVE SIGNAL</div>
-        <h1 class="hero-title">Loading Match...</h1>
-        <div class="hero-meta"><b>Sportlink Fancode</b><i></i>HAPPENING NOW</div>
-        <div class="hero-match">Team A<span class="vs">VS</span>Team B</div>
-        <div class="hero-actions">
-          <button class="watch" onclick="openMatch(0)"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH LIVE</button>
-          <button class="info" onclick="openMatch(0)">DETAILS</button>
-        </div>
-      </div>
-    </article>
-    <div class="hero-progress"><span class="active"></span></div>
-  </section>
+  <section class="hero" id="hero"></section>
   <div class="content">
     <div class="wrap">
       <section class="section">
         <div class="section-head">
-          <div>
-            <div class="section-kicker">LIVE SIGNAL</div>
-            <div class="section-title">Happening now</div>
-          </div>
+          <div><div class="section-kicker">LIVE SIGNAL</div><div class="section-title">Happening now</div></div>
           <button class="section-action" onclick="goLive()">ALL LIVE →</button>
         </div>
         <div class="live-rail" id="liveRail"></div>
       </section>
       <section class="section">
         <div class="section-head">
-          <div>
-            <div class="section-kicker">EXPLORE</div>
-            <div class="section-title">Enter a world</div>
-          </div>
+          <div><div class="section-kicker">EXPLORE</div><div class="section-title">Enter a world</div></div>
           <button class="section-action" onclick="goSports()">SPORTS →</button>
         </div>
         <div class="world-grid" id="worldGrid"></div>
       </section>
       <section class="section">
         <div class="section-head">
-          <div>
-            <div class="section-kicker">UP NEXT</div>
-            <div class="section-title">The schedule</div>
-          </div>
+          <div><div class="section-kicker">UP NEXT</div><div class="section-title">The schedule</div></div>
           <button class="section-action" onclick="goSchedule()">FULL SCHEDULE →</button>
         </div>
         <div class="schedule" id="homeSchedule"></div>
@@ -320,15 +271,19 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
     </div>
   </div>
 </main>
+
 <section id="livePage" class="page inner">
   <div class="wrap"><button class="back" onclick="goHome()">← BACK</button><h1 class="page-title">Live.</h1><p class="page-subtitle">The signal is on.</p><div class="match-grid" id="liveGrid"></div></div>
 </section>
+
 <section id="sportsPage" class="page inner">
   <div class="wrap"><button class="back" onclick="goHome()">← BACK</button><h1 class="page-title">Sports.</h1><p class="page-subtitle">Choose your world.</p><div class="match-grid" id="sportsGrid"></div></div>
 </section>
+
 <section id="sportPage" class="page inner">
   <div class="wrap"><button class="back" onclick="goSports()">← SPORTS</button><h1 class="page-title" id="sportTitle">Sport.</h1><p class="page-subtitle" id="sportSubtitle"></p><div class="match-grid" id="sportGrid"></div></div>
 </section>
+
 <section id="schedulePage" class="page inner">
   <div class="wrap"><button class="back" onclick="goHome()">← BACK</button><h1 class="page-title">Schedule.</h1><p class="page-subtitle">What's coming next.</p><div class="schedule" id="fullSchedule" style="margin-top:45px"></div></div>
 </section>
@@ -341,19 +296,10 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
       <div class="match-live" id="matchStatus"></div>
       <h1 class="match-heading" id="matchTitle"></h1>
       <div class="match-info" id="matchInfo"></div>
-      <div class="match-teams" id="matchTeams"></div>
       <div style="margin-top:28px" id="matchActionContainer"></div>
     </div>
   </section>
   <div class="match-bottom"><div class="access-box"><div class="access-label">CRICXCRATE ACCESS</div><div class="access-title">Your match. Your screen.</div><div class="access-text">Stream high-definition live sporting events smoothly through the CricxCrate media network.</div></div></div>
-</div>
-
-<div class="tg-modal-overlay" id="tgPremiumModal">
-  <div class="tg-modal-box">
-    <h3 class="tg-modal-title">Free Preview Ended</h3>
-    <p class="tg-modal-desc">Join our official Telegram channel to unlock uninterrupted access to the premium HD stream.</p>
-    <a class="tg-modal-btn-join" href="https://t.me/+m4odTq36LL4xNmI1" target="_blank" rel="noopener">JOIN TELEGRAM ↗</a>
-  </div>
 </div>
 
 <div class="search" id="search"><div class="search-inner"><button class="search-close" onclick="closeSearch()">← CLOSE</button><input id="searchInput" class="search-input" placeholder="Search." autocomplete="off"><div id="searchResults" class="search-results"></div></div></div>
@@ -365,32 +311,23 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
   <button data-mobile="schedule" onclick="goSchedule()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>Schedule</button>
 </nav>
 <script>
-const FEED = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
+const DATA_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
 const PROXY_URL = 'proxy.js?u=';
 const TELEGRAM = "https://t.me/+m4odTq36LL4xNmI1";
-let matches=[]; let selected=null; let heroTimer=null; let heroIndex=0; let lockTimer = null; let isStreamUnlocked = false;
-const PREVIEW_TIME = 15000;
+let allMatches = []; let selectedMatch = null; let heroTimer = null; let heroIndex = 0;
 const $ = id => document.getElementById(id);
 
 function esc(v){ return String(v ?? "").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;"); }
 
-function status(m){
+function getStatus(m){
   const s = String(m?.status || "").toUpperCase();
   if(s === "LIVE") return "LIVE";
   if(s.includes("COMPLETE") || s.includes("FINISH") || s.includes("END")) return "COMPLETED";
   return "UPCOMING";
 }
 
-function image(m){ return m?.image || "https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg"; }
-function category(m){ return m?.category || m?.sport || m?.tournament || "Cricket"; }
-
-function getTeamName(m, index) {
-  if(m?.title && m.title.includes(" vs ")) {
-    const parts = m.title.split(" vs ");
-    return parts[index] ? parts[index].replace(/\[.*?\]/g, "").trim() : (index === 0 ? "Team A" : "Team B");
-  }
-  return index === 0 ? (m?.title || "Team A") : "Team B";
-}
+function getImage(m){ return m?.image || "https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg"; }
+function getCategory(m){ return m?.category || m?.sport || m?.tournament || "Cricket"; }
 
 function parseCustomDate(time) {
   if (!time) return new Date();
@@ -411,71 +348,27 @@ function matchTime(m){ const d = parseCustomDate(m?.startTime); return isNaN(d) 
 
 async function loadFeed(){
   try{
-    const response = await fetch(FEED + "?t=" + Date.now(), {cache:"no-store"});
-    const json = await response.json();
-    matches = Array.isArray(json) ? json : (Array.isArray(json.matches) ? json.matches : (Array.isArray(json.data) ? json.data : []));
-    localStorage.setItem("cricxcrate_cache", JSON.stringify(matches));
+    const res = await fetch(DATA_URL + "?t=" + Date.now(), {cache:"no-store"});
+    const json = await res.json();
+    allMatches = json.matches || [];
     renderEverything();
-    checkUrlMatchShare();
-  }catch(error){
-    const cached = localStorage.getItem("cricxcrate_cache");
-    if(cached){ matches = JSON.parse(cached); renderEverything(); checkUrlMatchShare(); }
-  }
-}
-
-function checkUrlMatchShare(){
-  const hash = window.location.hash;
-  const params = new URLSearchParams(window.location.search);
-  let matchIdx = -1;
-  if(hash.includes("match=")){
-    matchIdx = parseInt(hash.split("match=")[1], 10);
-  } else if(params.has("match")){
-    matchIdx = parseInt(params.get("match"), 10);
-  }
-  if(!isNaN(matchIdx) && matches[matchIdx]){
-    setTimeout(() => {
-      openMatch(matchIdx);
-      if(status(matches[matchIdx]) === "LIVE") {
-        startWatch();
-      }
-    }, 500);
-  }
-}
-</script>
-<script>
-function extractStreamUrl(m){
-  if(!m) return "";
-  const streams = m.auto_streams && m.auto_streams.ENGLISH && m.auto_streams.ENGLISH.streams;
-  if(streams && typeof streams === 'object') {
-    const order = ['1080p','720p','540p','480p','360p','240p'];
-    const availableKeys = Object.keys(streams);
-    for(let q of order) {
-      if(streams[q]) return streams[q];
-    }
-    if(availableKeys.length > 0) return streams[availableKeys[0]];
-  }
-  if(m.streamUrl) return m.streamUrl;
-  if(m.url) return m.url;
-  return "";
+  }catch(e){ console.error(e); }
 }
 
 function renderHero(){
-  const items = matches.filter(m => status(m)==="LIVE" || status(m)==="UPCOMING").slice(0,7);
+  const items = allMatches.filter(m => getStatus(m)==="LIVE" || getStatus(m)==="UPCOMING").slice(0,7);
   if(!items.length) return;
   heroIndex = heroIndex % items.length;
   $("hero").innerHTML = items.map((m,i)=>{
-    const idx = matches.indexOf(m);
-    const live = status(m)==="LIVE";
-    const t1 = getTeamName(m, 0);
-    const t2 = getTeamName(m, 1);
+    const idx = allMatches.indexOf(m);
+    const live = getStatus(m)==="LIVE";
     return `
       <article class="hero-slide ${i===heroIndex?"active":""}">
-        <div class="hero-art" style="background-image:url('${esc(image(m))}')"></div>
+        <div class="hero-art" style="background-image:url('${esc(getImage(m))}')"></div>
         <div class="hero-copy">
           <div class="hero-eyebrow">${live ? `<span class="live-signal"></span>LIVE SIGNAL` : "UP NEXT"}</div>
           <h1 class="hero-title">${esc(m.title || "Live Match")}</h1>
-          <div class="hero-meta"><b>${esc(m.tournament || category(m))}</b><i></i>${live ? "HAPPENING NOW" : `${matchDate(m)} ·${matchTime(m)}`}</div>
-          <div class="hero-match">${esc(t1)}<span class="vs">VS</span>${esc(t2)}</div>
+          <div class="hero-meta"><b>${esc(m.tournament || getCategory(m))}</b><i></i>${live ? "HAPPENING NOW" : `${matchDate(m)} ·${matchTime(m)}`}</div>
           <div class="hero-actions">
             ${live ? `<button class="watch" onclick="openMatch(${idx})"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH LIVE</button>` : ``}
             <button class="info" onclick="openMatch(${idx})">DETAILS</button>
@@ -489,113 +382,117 @@ function renderHero(){
 }
 
 function liveCard(m,i, index=0){
-  return `<article class="live-card stagger-card" style="animation-delay:${index * 0.08}s" onclick="openMatch(${i})"><div class="live-art" style="background-image:url('${esc(image(m))}')"></div><div class="live-index">${String(i+1).padStart(2,"0")}</div><div class="live-mark">LIVE</div><div class="live-info"><div class="live-league">${esc(m.tournament || category(m))}</div><div class="live-name">${esc(m.title || "Live Match")}</div></div></article>`;
+  return `<article class="live-card stagger-card" style="animation-delay:${index * 0.08}s" onclick="openMatch(${i})"><div class="live-art" style="background-image:url('${esc(getImage(m))}')"></div><div class="live-index">${String(i+1).padStart(2,"0")}</div><div class="live-mark">LIVE</div><div class="live-info"><div class="live-league">${esc(m.tournament || getCategory(m))}</div><div class="live-name">${esc(m.title || "Live Match")}</div></div></article>`;
 }
+
 function renderLive(){
-  const live = matches.filter(m => status(m)==="LIVE");
-  $("liveRail").innerHTML = live.length ? live.map((m, idx) => liveCard(m, matches.indexOf(m), idx)).join("") : `<div style="padding:30px 2px;color:#666860;font-size:9px">No live signals right now.</div>`;
+  const live = allMatches.filter(m => getStatus(m)==="LIVE");
+  $("liveRail").innerHTML = live.length ? live.map((m, idx) => liveCard(m, allMatches.indexOf(m), idx)).join("") : `<div style="padding:30px 2px;color:#666860;font-size:9px">No live signals right now.</div>`;
   $("liveGrid").innerHTML = live.length ? live.map((m, idx) => matchPoster(m, idx)).join("") : `<div style="color:#666860;font-size:9px">Nothing live right now.</div>`;
 }
+
 function renderWorlds(){
-  const sports = [...new Set(matches.map(category))];
+  const sports = [...new Set(allMatches.map(getCategory))];
   $("worldGrid").innerHTML = sports.map((name,i)=>{
-    const list = matches.filter(m => category(m)===name);
-    return `<article class="world-card ${i===0?"large":""} stagger-card" style="animation-delay:${i * 0.1}s" onclick='openSport("${esc(name)}")'><div class="world-art" style="background-image:url('${esc(image(list[0]))}')"></div><div class="world-copy"><div class="world-number">${String(i+1).padStart(2,"0")}</div><div class="world-name">${esc(name)}</div></div></article>`;
+    const list = allMatches.filter(m => getCategory(m)===name);
+    return `<article class="world-card ${i===0?"large":""} stagger-card" style="animation-delay:${i * 0.1}s" onclick='openSport("${esc(name)}")'><div class="world-art" style="background-image:url('${esc(getImage(list[0]))}')"></div><div class="world-copy"><div class="world-number">${String(i+1).padStart(2,"0")}</div><div class="world-name">${esc(name)}</div></div></article>`;
   }).join("");
 }
+
 function matchPoster(m, index=0){
-  const i = matches.indexOf(m);
-  const live = status(m)==="LIVE";
-  return `<article class="match-poster stagger-card" style="animation-delay:${index * 0.06}s" onclick="openMatch(${i})"><div class="poster-art" style="background-image:url('${esc(image(m))}')"></div><div class="poster-top"><span class="poster-status">${live?"● LIVE":status(m)}</span><span class="poster-sport">${esc(category(m))}</span></div><div class="poster-copy"><div class="poster-league">${esc(m.tournament || "")}</div><div class="poster-title">${esc(m.title || "Match")}</div></div></article>`;
+  const i = allMatches.indexOf(m);
+  const live = getStatus(m)==="LIVE";
+  return `<article class="match-poster stagger-card" style="animation-delay:${index * 0.06}s" onclick="openMatch(${i})"><div class="poster-art" style="background-image:url('${esc(getImage(m))}')"></div><div class="poster-top"><span class="poster-status">${live?"● LIVE":getStatus(m)}</span><span class="poster-sport">${esc(getCategory(m))}</span></div><div class="poster-copy"><div class="poster-league">${esc(m.tournament || "")}</div><div class="poster-title">${esc(m.title || "Match")}</div></div></article>`;
 }
+
 function renderSports(){
-  const sports = [...new Set(matches.map(category))];
+  const sports = [...new Set(allMatches.map(getCategory))];
   $("sportsGrid").innerHTML = sports.map((name, idx)=>{
-    const list = matches.filter(m => category(m)===name);
-    return `<article class="match-poster stagger-card" style="animation-delay:${idx * 0.08}s" onclick='openSport("${esc(name)}")'><div class="poster-art" style="background-image:url('${esc(image(list[0]))}')"></div><div class="poster-copy"><div class="poster-league">${list.length} EVENTS</div><div class="poster-title" style="font-size:25px">${esc(name)}</div></div></article>`;
+    const list = allMatches.filter(m => getCategory(m)===name);
+    return `<article class="match-poster stagger-card" style="animation-delay:${idx * 0.08}s" onclick='openSport("${esc(name)}")'><div class="poster-art" style="background-image:url('${esc(getImage(list[0]))}')"></div><div class="poster-copy"><div class="poster-league">${list.length} EVENTS</div><div class="poster-title" style="font-size:25px">${esc(name)}</div></div></article>`;
   }).join("");
 }
+
 function scheduleRow(m, index=0){
-  const i = matches.indexOf(m);
-  const live = status(m)==="LIVE";
-  const imgUrl = image(m);
-  const t1 = getTeamName(m, 0);
-  const t2 = getTeamName(m, 1);
+  const i = allMatches.indexOf(m);
+  const live = getStatus(m)==="LIVE";
   return `
   <div class="schedule-line stagger-card" style="animation-delay:${index * 0.05}s" onclick="openMatch(${i})">
     <div class="schedule-date"><b>${matchDate(m)}</b><br>${matchTime(m)}</div>
-    <div class="schedule-thumb" style="background-image:url('${esc(imgUrl)}')"></div>
+    <div class="schedule-thumb" style="background-image:url('${esc(getImage(m))}')"></div>
     <div>
-      <div class="schedule-match">${esc(t1)}<span class="schedule-vs">VS</span>${esc(t2)}</div>
-      <div class="schedule-league">${esc(m.tournament || category(m))}</div>
+      <div class="schedule-match">${esc(m.title || "Match")}</div>
+      <div class="schedule-league">${esc(m.tournament || getCategory(m))}</div>
     </div>
     <div class="schedule-state ${live?"live":""}">${live?"LIVE":"UPCOMING"}</div>
   </div>
   `;
 }
+
 function renderSchedule(){
-  const list = matches.filter(m => status(m)!=="COMPLETED");
+  const list = allMatches.filter(m => getStatus(m)!=="COMPLETED");
   $("homeSchedule").innerHTML = list.slice(0,7).map((m, idx) => scheduleRow(m, idx)).join("");
   $("fullSchedule").innerHTML = list.map((m, idx) => scheduleRow(m, idx)).join("");
 }
 
+function renderEverything(){
+  renderHero(); renderLive(); renderWorlds(); renderSports(); renderSchedule();
+}
+</script>
+<script>
 function openMatch(i){
-  selected = matches[i];
-  if(!selected) return;
-  const isLive = status(selected) === "LIVE";
-  $("matchBackground").style.backgroundImage = `url("${image(selected)}")`;
-  $("matchStatus").textContent = isLive ? "● LIVE SIGNAL" : status(selected);
-  $("matchTitle").textContent = selected.title || "Match";
-  $("matchInfo").textContent = `${selected.tournament || category(selected)} · ${isLive ? "HAPPENING NOW" : `${matchDate(selected)} ·${matchTime(selected)}`}`;
-  const t1 = getTeamName(selected, 0);
-  const t2 = getTeamName(selected, 1);
-  $("matchTeams").innerHTML = `<span>${esc(t1)}</span><span class="vs">VS</span><span>${esc(t2)}</span>`;
+  selectedMatch = allMatches[i];
+  if(!selectedMatch) return;
+  const isLive = getStatus(selectedMatch) === "LIVE";
+  $("matchBackground").style.backgroundImage = `url("${getImage(selectedMatch)}")`;
+  $("matchStatus").textContent = isLive ? "● LIVE SIGNAL" : getStatus(selectedMatch);
+  $("matchTitle").textContent = selectedMatch.title || "Match";
+  $("matchInfo").textContent = `${selectedMatch.tournament || getCategory(selectedMatch)} · ${isLive ? "HAPPENING NOW" : `${matchDate(selectedMatch)} ·${matchTime(selectedMatch)}`}`;
+  
   const actionContainer = $("matchActionContainer");
   if(isLive){
     actionContainer.innerHTML = `<button class="watch" onclick="startWatch()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH LIVE</button>`;
   } else {
-    actionContainer.innerHTML = `<div style="color:var(--soft); font-size:9px; font-weight:700; letter-spacing:1px; background:rgba(255,255,255,0.04); border:1px solid var(--line); display:inline-block; padding:12px 20px; border-radius:10px;">⏳ MATCH COMMENCING SOON · STAY TUNED</div>`;
+    actionContainer.innerHTML = `<div style="color:var(--soft); font-size:9px; font-weight:700; background:rgba(255,255,255,0.04); border:1px solid var(--line); display:inline-block; padding:12px 20px; border-radius:10px;">⏳ MATCH COMMENCING SOON · STAY TUNED</div>`;
   }
   $("matchLayer").classList.add("open");
   document.body.style.overflow="hidden";
 }
+
 function closeMatch(){ $("matchLayer").classList.remove("open"); document.body.style.overflow=""; }
 function closePlayerModal(){
   const playerLayer = document.getElementById("playerModalLayer");
   if(playerLayer) playerLayer.remove();
   document.body.style.overflow="";
 }
-function startWatch(){ 
-  closeMatch(); 
-  if(selected) {
-    const idx = matches.indexOf(selected);
-    if(idx !== -1) {
-      history.replaceState(null, "", window.location.pathname + "#match=" + idx);
-    }
-  }
-  finishAccess(); 
-}
 
-function showStartupTgModal(){
-  setTimeout(() => { $("startupTgModal").classList.add("show"); }, 400);
-}
-function closeStartupTgModal(){
-  $("startupTgModal").classList.remove("show");
-}
-window.addEventListener("DOMContentLoaded", () => { showStartupTgModal(); });
-
-function finishAccess(){
-  if(!selected) return;
-  const rawStreamUrl = extractStreamUrl(selected);
-  if(!rawStreamUrl){ alert("Stream link not available for this match."); return; }
+function startWatch(){
+  closeMatch();
+  if(!selectedMatch) return;
   
-  const proxiedUrl = PROXY_URL + encodeURIComponent(rawStreamUrl);
-  const streamUrl = btoa(proxiedUrl);
+  const streams = selectedMatch.auto_streams && selectedMatch.auto_streams.ENGLISH && selectedMatch.auto_streams.ENGLISH.streams;
+  if(!streams || Object.keys(streams).length === 0){
+    alert("Stream not available");
+    return;
+  }
+
+  const qualityMap = {};
+  const qualityOptions = [];
+  const order = ['1080p','720p','540p','480p','360p','240p'];
+  const sortedKeys = Object.keys(streams).sort((a, b) => order.indexOf(b) - order.indexOf(a));
+
+  sortedKeys.forEach(q => {
+    const h = parseInt(q, 10) || 720;
+    qualityMap[h] = PROXY_URL + encodeURIComponent(streams[q]);
+    if(!qualityOptions.includes(h)) qualityOptions.push(h);
+  });
 
   let playerLayer = document.getElementById("playerModalLayer");
   if(!playerLayer){ playerLayer = document.createElement("div"); playerLayer.id = "playerModalLayer"; document.body.appendChild(playerLayer); }
-  const cleanTitle = (selected.title || "Live Stream").replace(/\[.*?\]/g, "").trim();
-  const tournamentText = selected.tournament || category(selected);
+  
+  const cleanTitle = (selectedMatch.title || "Live Stream").replace(/\[.*?\]/g, "").trim();
+  const tournamentText = selectedMatch.tournament || getCategory(selectedMatch);
+
   playerLayer.innerHTML = `
     <div class="player-modal-wrapper">
       <header class="player-top-nav">
@@ -624,6 +521,7 @@ function finishAccess(){
     </div>
   `;
   document.body.style.overflow = "hidden";
+
   playerLayer.querySelector("#btnShare").addEventListener("click", async () => {
     try {
       const shareUrl = window.location.href;
@@ -637,6 +535,7 @@ function finishAccess(){
       }
     } catch(e){}
   });
+
   const iframe = playerLayer.querySelector('#playerFrame');
   iframe.srcdoc = `
     <!DOCTYPE html>
@@ -650,7 +549,6 @@ function finishAccess(){
         .plyr__controls { padding: 12px; z-index: 10; }
       </style>
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
       <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
       <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"><\/script>
     </head>
@@ -659,79 +557,61 @@ function finishAccess(){
       <script>
         document.addEventListener('DOMContentLoaded', () => {
           const video = document.getElementById('vid');
-          const encoded = '${streamUrl}';
-          const source = atob(encoded);
+          const qMap = ${JSON.stringify(qualityMap)};
+          const qOptions = ${JSON.stringify(qualityOptions)};
+          let currentSource = qMap[qOptions[0]];
           let playerInstance = null;
-          
-          function initPlyr(qualities = [720]) {
-            if (playerInstance) return;
-            playerInstance = new Plyr(video, { 
-              autoplay: true,
-              controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
-              settings: ['quality', 'speed'],
-              quality: {
-                default: qualities[0] || 720,
-                options: qualities,
-                forced: true,
-                onChange: (newQuality) => {
-                  if (window.hls && window.hls.levels) {
-                    window.hls.levels.forEach((level, index) => {
-                      if (level.height === newQuality) { window.hls.currentLevel = index; }
-                    });
+          let hlsInstance = null;
+
+          function initPlayer(src) {
+            if (hlsInstance) { hlsInstance.destroy(); }
+            
+            if (Hls.isSupported()) {
+              const hls = new Hls({ maxBufferLength: 30, enableWorker: true });
+              hls.loadSource(src);
+              hls.attachMedia(video);
+              hlsInstance = hls;
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              video.src = src;
+            }
+
+            if (!playerInstance) {
+              playerInstance = new Plyr(video, { 
+                autoplay: true,
+                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
+                settings: ['quality', 'speed'],
+                quality: {
+                  default: qOptions[0],
+                  options: qOptions,
+                  forced: true,
+                  onChange: (newQuality) => {
+                    const targetUrl = qMap[newQuality];
+                    if (targetUrl && targetUrl !== currentSource) {
+                      currentSource = targetUrl;
+                      const currentTime = video.currentTime;
+                      initPlayer(targetUrl);
+                      video.currentTime = currentTime;
+                    }
                   }
-                }
-              },
-              speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5] },
-              fullscreen: { enabled: true, fallback: true, iosNative: true }
-            });
-            playerInstance.on('playing', () => window.parent.postMessage('cricxcrate-playing', '*'));
-            playerInstance.on('enterfullscreen', () => window.parent.postMessage('cricxcrate-fs-enter', '*'));
-            playerInstance.on('exitfullscreen', () => window.parent.postMessage('cricxcrate-fs-exit', '*'));
+                },
+                speed: { selected: 1, options: [0.5, 1, 1.25, 1.5] },
+                fullscreen: { enabled: true, fallback: true, iosNative: true }
+              });
+              
+              playerInstance.on('enterfullscreen', () => window.parent.postMessage('cricxcrate-fs-enter', '*'));
+              playerInstance.on('exitfullscreen', () => window.parent.postMessage('cricxcrate-fs-exit', '*'));
+            }
             video.play().catch(()=>{});
           }
 
-          window.addEventListener('message', (e) => {
-            if (e.data === 'cricxcrate-force-pause' && playerInstance) playerInstance.pause();
-            if (e.data === 'cricxcrate-force-play' && playerInstance) playerInstance.play();
-          });
-
-          if (Hls.isSupported()) {
-            const hls = new Hls({ startLevel: -1, capLevelToPlayerSize: true, autoLevelCapping: -1, maxBufferLength: 30, maxMaxBufferLength: 60, maxBufferSize: 60 * 1000 * 1000, liveSyncDurationCount: 3, liveMaxLatencyDurationCount: 10, enableWorker: true, lowLatencyMode: false, capLevelOnFPSDrop: true });
-            hls.loadSource(source);
-            hls.attachMedia(video);
-            window.hls = hls;
-            
-            hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
-              let availableQualities = [720];
-              if(data.levels && data.levels.length > 0) {
-                 availableQualities = data.levels.map(l => l.height).sort((a, b) => b - a);
-              }
-              initPlyr(availableQualities);
-            });
-
-            setTimeout(() => { if (!playerInstance) initPlyr([720]); }, 2000);
-            
-            hls.on(Hls.Events.ERROR, function (event, data) {
-              if (data.fatal) {
-                switch (data.type) {
-                  case Hls.ErrorTypes.NETWORK_ERROR: hls.startLoad(); break;
-                  case Hls.ErrorTypes.MEDIA_ERROR: hls.recoverMediaError(); break;
-                  default: hls.destroy(); break;
-                }
-              }
-            });
-          } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = source;
-            video.addEventListener('loadedmetadata', () => initPlyr([720]));
-          }
+          initPlayer(currentSource);
         });
       <\/script>
     </body>
     </html>
   `;
 }
-</script>
-<script>
+
 window.addEventListener('message', (e) => {
   if (e.data === 'cricxcrate-fs-enter') {
     const rig = document.getElementById("playerContainer");
@@ -739,47 +619,17 @@ window.addEventListener('message', (e) => {
   } else if (e.data === 'cricxcrate-fs-exit') {
     const rig = document.getElementById("playerContainer");
     if(rig) { rig.classList.remove('fs-active'); if (document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
-  } else if (e.data === 'cricxcrate-playing') {
-    const lastUnlockedTime = localStorage.getItem('cricxcrate_stream_unlocked_time');
-    const now = Date.now();
-    const sevenDays = 7 * 24 * 60 * 60 * 1000;
-
-    if (lastUnlockedTime && (now - lastUnlockedTime < sevenDays)) {
-      isStreamUnlocked = true;
-    }
-
-    if (!isStreamUnlocked && !lockTimer) {
-      lockTimer = setTimeout(() => {
-        const iframe = document.getElementById("playerFrame");
-        if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage('cricxcrate-force-pause', '*');
-        $("tgPremiumModal").classList.add('show');
-        localStorage.setItem('cricxcrate_stream_unlocked_time', Date.now());
-      }, PREVIEW_TIME);
-    }
   }
 });
 
-function openSearch(){ $("search").classList.add("open"); $("searchInput").value=""; renderSearch(""); setTimeout(() => $("searchInput").focus(), 100); }
+function openSearch(){ $("search").classList.add("open"); $("searchInput").value=""; setTimeout(() => $("searchInput").focus(), 100); }
 function closeSearch(){ $("search").classList.remove("open"); }
-function renderSearch(query){
-  query = query.trim().toLowerCase();
-  if(!query){ $("searchResults").innerHTML = `<div style="color:#666860;font-size:9px">Search matches, teams, sports and tournaments.</div>`; return; }
-  const result = matches.filter(m => [m.title, m.tournament, category(m), getTeamName(m,0), getTeamName(m,1)].join(" ").toLowerCase().includes(query));
-  $("searchResults").innerHTML = result.length ? `<div class="match-grid">${result.map((m, idx) => matchPoster(m, idx)).join("")}</div>` : `<div style="color:#666860;font-size:9px">No results.</div>`;
-}
-$("searchInput").addEventListener("input", e => renderSearch(e.target.value));
-function openSport(name){ showPage("sportPage"); setActive("sports"); const list = matches.filter(m => category(m)===name); $("sportTitle").textContent = name + "."; $("sportSubtitle").textContent = `${list.length} events`; $("sportGrid").innerHTML = list.map((m, idx) => matchPoster(m, idx)).join(""); }
-function showPage(id, push=true){
+
+function showPage(id){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   $(id).classList.add("active");
   window.scrollTo(0,0);
-  if(push){ history.pushState({page: id}, "", "#" + id); }
 }
-window.addEventListener("popstate", (e) => {
-  const targetPage = e.state?.page || "home";
-  showPage(targetPage, false);
-  closeSearch(); closeMatch(); closePlayerModal();
-});
 function setActive(name){
   document.querySelectorAll("[data-nav]").forEach(b => b.classList.toggle("active", b.dataset.nav===name));
   document.querySelectorAll("[data-mobile]").forEach(b => b.classList.toggle("active", b.dataset.mobile===name));
@@ -788,25 +638,9 @@ function goHome(){ showPage("home"); setActive("home"); }
 function goLive(){ showPage("livePage"); setActive("live"); renderLive(); }
 function goSports(){ showPage("sportsPage"); setActive("sports"); renderSports(); }
 function goSchedule(){ showPage("schedulePage"); setActive("schedule"); renderSchedule(); }
+function openSport(name){ showPage("sportPage"); setActive("sports"); const list = allMatches.filter(m => getCategory(m)===name); $("sportTitle").textContent = name + "."; $("sportSubtitle").textContent = `${list.length} events`; $("sportGrid").innerHTML = list.map((m, idx) => matchPoster(m, idx)).join(""); }
+
 window.addEventListener("scroll", ()=>{ $("nav").classList.toggle("scrolled", scrollY>25); });
-document.addEventListener("keydown", e=>{ if(e.key==="Escape"){ closeSearch(); closeMatch(); closePlayerModal(); $("tgPremiumModal").classList.remove("show"); } });
-
-document.addEventListener("click", function(e){
-  const target = e.target.closest("button, .live-card, .match-poster, .schedule-line, .world-card");
-  if(!target) return;
-  const circle = document.createElement("span");
-  circle.classList.add("ripple");
-  const rect = target.getBoundingClientRect();
-  const diameter = Math.max(rect.width, rect.height);
-  circle.style.width = circle.style.height = `${diameter}px`;
-  circle.style.left = `${e.clientX - rect.left - diameter/2}px`;
-  circle.style.top = `${e.clientY - rect.top - diameter/2}px`;
-  target.appendChild(circle);
-  setTimeout(() => circle.remove(), 500);
-});
-
-function renderEverything(){ renderHero(); renderLive(); renderWorlds(); renderSports(); renderSchedule(); }
-loadFeed();
-setInterval(loadFeed, 60000);
+window.addEventListener("DOMContentLoaded", () => { setTimeout(() => $("startupTgModal").classList.add("show"), 400); loadFeed(); });
 </script>
 </html>
