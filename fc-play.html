@@ -12,12 +12,11 @@
 <!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<!-- YOUR MAIN CSS -->
-<link rel="stylesheet" href="style.css">
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<!-- SHAKA PLAYER -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
+<!-- HLS.JS -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
 
@@ -38,11 +37,6 @@ left:0;
 width:100%;
 height:100%;
 background:#000;
-}
-
-.shaka-video-container{
-width:100%;
-height:100%;
 }
 
 video{
@@ -83,6 +77,79 @@ margin-bottom:12px;
 100%{transform:rotate(360deg)}
 }
 
+/* Custom On-Screen Quality Control Overlay */
+.quality-control-panel{
+position:absolute;
+top:20px;
+right:20px;
+z-index:3000;
+font-family:'Poppins',sans-serif;
+}
+
+.quality-toggle-btn{
+background:rgba(17, 24, 39, 0.8);
+border:1px solid rgba(59, 130, 246, 0.4);
+color:#fff;
+padding:8px 16px;
+border-radius:20px;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+backdrop-filter:blur(6px);
+display:flex;
+align-items:center;
+gap:8px;
+box-shadow:0 4px 12px rgba(0,0,0,0.5);
+transition:.2s;
+}
+
+.quality-toggle-btn:hover{
+background:rgba(37, 99, 235, 0.9);
+border-color:#3b82f6;
+}
+
+.quality-dropdown{
+position:absolute;
+right:0;
+top:45px;
+background:#111827;
+border:1px solid #253247;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,0.8);
+display:none;
+flex-direction:column;
+min-width:130px;
+}
+
+.quality-dropdown.show{
+display:flex;
+}
+
+.quality-option{
+padding:10px 16px;
+color:#e5e7eb;
+font-size:14px;
+font-weight:500;
+cursor:pointer;
+text-align:left;
+transition:.2s;
+background:transparent;
+border:none;
+width:100%;
+}
+
+.quality-option:hover{
+background:#2563eb;
+color:#fff;
+}
+
+.quality-option.active{
+background:#1d4ed8;
+color:#fff;
+font-weight:600;
+}
+
 </style>
 
 </head>
@@ -90,12 +157,19 @@ margin-bottom:12px;
 <body>
 
 <div class="video-container">
-  <div class="shaka-video-container" data-shaka-player>
-    <video id="video" autoplay playsinline muted></video>
-    <div id="loading" class="loading-overlay">
-      <div class="spinner"></div>
-      Analyzing the video...
-    </div>
+  <video id="video" controls autoplay playsinline></video>
+  
+  <!-- On-Screen Quality Selector Menu -->
+  <div class="quality-control-panel" id="qualityPanel" style="display:none;">
+    <button class="quality-toggle-btn" onclick="toggleQualityMenu()">
+      <i class="fas fa-cog"></i> <span id="currentQualityLabel">Quality</span>
+    </button>
+    <div class="quality-dropdown" id="qualityDropdown"></div>
+  </div>
+
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    Loading stream...
   </div>
 </div>
 
@@ -103,73 +177,131 @@ margin-bottom:12px;
 
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get("data");
-let streamUrl = encoded ? atob(encoded) : "";
+let streamData = null;
+
+try {
+  streamData = encoded ? JSON.parse(atob(encoded)) : null;
+} catch(e) {
+  streamData = null;
+}
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
+const qualityPanel = document.getElementById("qualityPanel");
+const qualityDropdown = document.getElementById("qualityDropdown");
+const currentQualityLabel = document.getElementById("currentQualityLabel");
 
-async function initPlayer(){
+let hls = null;
 
-  if(!streamUrl){
-    alert("Stream URL missing");
+function initPlayer() {
+  if (!streamData) {
+    alert("Stream data missing");
     return;
   }
 
-  try{
+  // Handle if data is passed as a single string URL or an object of qualities
+  let streams = {};
+  if (typeof streamData === 'string') {
+    streams = { "Auto": streamData };
+  } else {
+    streams = streamData;
+  }
 
-    const player = new shaka.Player(video);
-    const container = document.querySelector(".shaka-video-container");
-    const ui = new shaka.ui.Overlay(player, container, video);
+  const keys = Object.keys(streams);
+  if (keys.length === 0) {
+    alert("No streams available");
+    return;
+  }
 
-    ui.configure({
-      controlPanelElements:[
-        'play_pause',
-        'mute',
-        'time_and_duration',
-        'spacer',
-        'quality',
-        'language',
-        'picture_in_picture',
-        'fullscreen',
-        'overflow_menu'
-      ],
-      addSeekBar:true
+  // If multiple qualities exist, show on-screen selector
+  if (keys.length > 1) {
+    qualityPanel.style.display = "block";
+    qualityDropdown.innerHTML = "";
+    
+    keys.forEach((q, index) => {
+      const btn = document.createElement("button");
+      btn.className = "quality-option" + (index === 0 ? " active" : "");
+      btn.innerText = q;
+      btn.onclick = () => {
+        switchStream(streams[q], q);
+        toggleQualityMenu();
+      };
+      qualityDropdown.appendChild(btn);
     });
 
-    player.configure({
-      streaming:{
-        bufferingGoal:10,
-        rebufferingGoal:2,
-        bufferBehind:30
+    currentQualityLabel.innerText = keys[0];
+    playSource(streams[keys[0]]);
+  } else {
+    playSource(streams[keys[0]]);
+  }
+}
+
+function playSource(url) {
+  loading.style.display = "flex";
+  
+  if (hls) {
+    hls.destroy();
+  }
+
+  if (Hls.isSupported()) {
+    hls = new Hls();
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(() => { video.muted = true; video.play(); });
+      loading.style.display = "none";
+    });
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        switch(data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls.recoverMediaError();
+            break;
+          default:
+            hls.destroy();
+            break;
+        }
       }
     });
-
-    await player.load(streamUrl);
-
-    video.play().catch(()=>{
-      video.muted=true;
-      video.play();
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
+    video.addEventListener('loadedmetadata', () => {
+      video.play().catch(() => { video.muted = true; video.play(); });
+      loading.style.display = "none";
     });
-
-    video.addEventListener("playing",()=>{
-      loading.style.display="none";
-    });
-
   }
+}
 
-  catch(e){
+function switchStream(url, qualityName) {
+  currentQualityLabel.innerText = qualityName;
+  
+  // Highlight active option
+  const options = qualityDropdown.querySelectorAll('.quality-option');
+  options.forEach(opt => {
+    if (opt.innerText === qualityName) {
+      opt.classList.add('active');
+    } else {
+      opt.classList.remove('active');
+    }
+  });
 
-    console.log("Shaka error:",e);
+  const currentTime = video.currentTime;
+  playSource(url);
+  video.currentTime = currentTime;
+}
 
-    video.src = streamUrl;
-    video.play();
+function toggleQualityMenu() {
+  qualityDropdown.classList.toggle('show');
+}
 
-    video.addEventListener("playing",()=>{
-      loading.style.display="none";
-    });
-
+// Close dropdown when clicking outside
+window.onclick = function(event) {
+  if (!event.target.closest('.quality-control-panel')) {
+    qualityDropdown.classList.remove('show');
   }
-
 }
 
 document.addEventListener("DOMContentLoaded", initPlayer);
