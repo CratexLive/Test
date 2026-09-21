@@ -271,7 +271,10 @@ user-select:none;
 const urlParams = new URLSearchParams(window.location.search);
 const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
-let streamUrl = encoded ? atob(encoded) : "";
+
+// Wrap raw stream URL through Cloudflare Worker proxy
+let rawStreamUrl = encoded ? atob(encoded) : "";
+let streamUrl = rawStreamUrl ? window.location.origin + "/?u=" + encodeURIComponent(rawStreamUrl) : "";
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
