@@ -3,8 +3,12 @@ export async function onRequest(context) {
   const url = new URL(request.url);
   const targetUrl = url.searchParams.get('u');
 
+  // Handle CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers: corsHeaders() });
+    return new Response(null, {
+      status: 204,
+      headers: corsHeaders(),
+    });
   }
 
   if (!targetUrl) {
@@ -15,7 +19,10 @@ export async function onRequest(context) {
   }
 
   try {
+    // Decode the target URL
     const decodedUrl = decodeURIComponent(targetUrl);
+
+    // Fetch from origin with appropriate headers
     const originResponse = await fetch(decodedUrl, {
       method: request.method,
       headers: {
@@ -28,9 +35,11 @@ export async function onRequest(context) {
       redirect: 'follow',
     });
 
+    // Get response body
     const contentType = originResponse.headers.get('Content-Type') || 'application/octet-stream';
     let body = await originResponse.arrayBuffer();
 
+    // For HLS manifests (.m3u8), rewrite segment URLs to also go through proxy
     if (decodedUrl.includes('.m3u8') || contentType.includes('mpegurl') || contentType.includes('m3u8')) {
       const text = new TextDecoder().decode(body);
       const baseUrl = decodedUrl.substring(0, decodedUrl.lastIndexOf('/') + 1);
@@ -38,7 +47,9 @@ export async function onRequest(context) {
 
       const rewritten = text.split('\n').map(line => {
         const trimmed = line.trim();
+        // Skip empty lines and comments/tags
         if (!trimmed || trimmed.startsWith('#')) {
+          // But rewrite URI= attributes inside tags (for key URLs, etc.)
           if (trimmed.includes('URI="')) {
             return trimmed.replace(/URI="([^"]+)"/g, (match, uri) => {
               const absoluteUri = uri.startsWith('http') ? uri : baseUrl + uri;
@@ -47,9 +58,11 @@ export async function onRequest(context) {
           }
           return line;
         }
+        // Rewrite segment/playlist URLs
         if (trimmed.startsWith('http')) {
           return `${proxyBase}?u=${encodeURIComponent(trimmed)}`;
         }
+        // Relative URL — make absolute then proxy
         const absoluteUrl = baseUrl + trimmed;
         return `${proxyBase}?u=${encodeURIComponent(absoluteUrl)}`;
       }).join('\n');
@@ -57,17 +70,22 @@ export async function onRequest(context) {
       body = new TextEncoder().encode(rewritten);
     }
 
+    // Build response
     const responseHeaders = {
       ...corsHeaders(),
       'Content-Type': contentType,
       'Cache-Control': 'no-cache, no-store, must-revalidate',
     };
 
+    // Preserve content length for segments
     if (!decodedUrl.includes('.m3u8') && !contentType.includes('mpegurl')) {
       responseHeaders['Content-Length'] = body.byteLength.toString();
     }
 
-    return new Response(body, { status: originResponse.status, headers: responseHeaders });
+    return new Response(body, {
+      status: originResponse.status,
+      headers: responseHeaders,
+    });
 
   } catch (err) {
     return new Response(JSON.stringify({ error: 'Proxy fetch failed', details: err.message }), {
