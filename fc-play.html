@@ -31,6 +31,8 @@ video{width:100%;height:100%;object-fit:contain;background:#000;}
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get("data");
 let rawUrl = encoded ? atob(encoded) : "";
+
+// Agar proxy route kaam na kare toh direct raw URL ya proxy URL dono try honge
 const proxyUrl = 'proxy.js?u=' + encodeURIComponent(rawUrl);
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
@@ -38,43 +40,35 @@ const loading = document.getElementById("loading");
 async function initPlayer(){
   if(!rawUrl){ alert("Stream URL missing"); return; }
   
-  let isLoaded = false;
-
-  // Fallback timer: agar 6 second me shaka load na ho toh direct proxy url set kar do
-  const timer = setTimeout(() => {
-    if(!isLoaded) {
-      console.warn("Switching to direct fallback player");
-      video.src = proxyUrl;
+  // Loader ko 8 seconds se zyada nahi rukne denge, agar tab tak play na ho toh direct source set kar denge
+  const fallbackTimer = setTimeout(() => {
+    if(loading.style.display !== "none") {
+      console.warn("Shaka timeout, switching to direct/native fallback");
+      video.src = rawUrl;
       video.play().catch(()=>{});
-      video.addEventListener("playing", () => {
-        loading.style.display = "none";
-      });
+      loading.style.display = "none";
     }
-  }, 6000);
+  }, 8000);
 
   try{
     const player = new shaka.Player(video);
     const container = document.querySelector(".shaka-video-container");
     const ui = new shaka.ui.Overlay(player, container, video);
-    ui.configure({
-      controlPanelElements:['play_pause','mute','time_and_duration','spacer','quality','fullscreen','overflow_menu'],
-      addSeekBar:true
+    
+    player.configure({
+      streaming: { lowLatencyMode: true, bufferingGoal: 15 }
     });
-    
+
     await player.load(proxyUrl);
-    isLoaded = true;
-    clearTimeout(timer);
-    
+    clearTimeout(fallbackTimer);
     video.play().catch(()=>{ video.muted=true; video.play(); });
     video.addEventListener("playing",()=>{ loading.style.display="none"; });
   }catch(e){
-    console.error("Shaka error:", e);
-    if(!isLoaded){
-      clearTimeout(timer);
-      video.src = proxyUrl;
-      video.play().catch(()=>{});
-      video.addEventListener("playing",()=>{ loading.style.display="none"; });
-    }
+    console.error("Player error, falling back:", e);
+    clearTimeout(fallbackTimer);
+    video.src = rawUrl;
+    video.play().catch(()=>{});
+    video.addEventListener("playing",()=>{ loading.style.display="none"; });
   }
 }
 
