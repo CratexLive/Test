@@ -383,9 +383,13 @@ function openQuality(index) {
     btn.className = "quality-item";
     btn.innerText = q;
     btn.onclick = function () {
-      const encoded = btoa(streams[q]);
       const matchTitle = encodeURIComponent(match.title || "Match");
-      window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encoded)}&title=${matchTitle}`;
+      // Extract numeric match ID from the first stream URL for short link
+      const sampleUrl = streams[q];
+      const matchIdMatch = sampleUrl.match(/\/(\d+)_/);
+      const matchId = matchIdMatch ? matchIdMatch[1] : "match";
+
+      window.location.href = `${PLAYER_URL}?id=${matchId}&q=${q}&title=${matchTitle}`;
     };
     list.appendChild(btn);
   });
