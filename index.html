@@ -1,356 +1,336 @@
-<!DOCTYPE html><html lang="en"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000">
-<meta name="referrer" content="no-referrer">
-<title></title>
+<!DOCTYPE html>
+<html lang="en">
 
-<link rel="icon" href="https://livedakho.pages.dev/file_00000000d56c7208939f3cb5bb73adc0.png">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;family=Acme&amp;family=Amaranth:wght@400;700&amp;display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/shaka-player@4.16.2/dist/shaka-player.ui.min.js"></script>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SPORTLINK - FANCODE</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Tailwind -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html{height:100%;height:-webkit-fill-available;-webkit-text-size-adjust:100%;}
-body{width:100%;height:100%;min-height:100dvh;background:#000;overflow:hidden;font-family:'Poppins',-apple-system,BlinkMacSystemFont,sans-serif;}
-#player{position:fixed;inset:0;background:#000;user-select:none;-webkit-user-select:none;overflow:hidden;}
-#vid{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform-origin:center center;transition:transform .3s ease,object-fit .2s;}
-#overlay{position:absolute;inset:0;z-index:10;background:#080808;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .4s;}
-#overlay.gone{opacity:0;pointer-events:none;}
-.load-ring{position:relative;width:48px;height:48px;}
-.load-ring::before,.load-ring::after{content:'';position:absolute;border-radius:50%;}
-.load-ring::before{inset:0;border:3px solid rgba(255,255,255,.08);}
-.load-ring::after{inset:0;border:3px solid transparent;border-top-color:rgba(255,255,255,.85);animation:rot .7s linear infinite;}
-@keyframes rot{to{transform:rotate(360deg)}}
-.load-label{font-size:12px;color:rgba(255,255,255,.38);letter-spacing:.4px;}
-#bufspin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:8;pointer-events:none;display:none;}
-#bufspin div{width:32px;height:32px;border:2.5px solid rgba(255,255,255,.12);border-top-color:rgba(255,255,255,.75);border-radius:50%;animation:rot .65s linear infinite;}
-#err-ov{position:absolute;inset:0;z-index:11;background:#0d0d16;display:none;align-items:center;justify-content:center;padding:24px;}
-#err-ov.show{display:flex;}
-.ec{background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:20px;padding:44px 28px 36px;max-width:380px;width:100%;text-align:center;}
-.ec .ei-wrap{width:62px;height:62px;border-radius:50%;border:1.5px solid rgba(255,255,255,.13);background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;}
-.ec .ei-wrap svg{width:30px;height:30px;stroke:rgba(255,255,255,.48);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
-.ec .etxt{font-size:19px;font-weight:700;color:#efefef;margin-bottom:8px;}
-.ec .emsg{font-size:13px;color:rgba(255,255,255,.38);line-height:1.75;margin-bottom:22px;word-break:break-all;}
-.ec .eretry{display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;color:rgba(255,255,255,.32);}
-.retdot{width:6px;height:6px;border-radius:50%;background:#ffcc00;animation:rpulse 1.4s ease-in-out infinite;}
-@keyframes rpulse{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
-#bigplay{position:absolute;inset:0;z-index:16;display:flex;align-items:center;justify-content:center;pointer-events:none;transition:opacity .22s;}
-#bigplay.shown{pointer-events:auto;}
-#bigplay.gone{opacity:0;pointer-events:none;}
-.bpbtn{position:relative;width:62px;height:62px;border-radius:50%;background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.06));-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1.5px solid rgba(255,255,255,.55);box-shadow:0 6px 28px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.bpbtn svg{width:24px;height:24px;margin-left:3px;filter:drop-shadow(0 1px 3px rgba(0,0,0,.4));}
-#ctrls{position:absolute;bottom:0;left:0;right:0;z-index:20;transition:opacity .28s;}
-#ctrls.gone{opacity:0;pointer-events:none;}
-#prog{margin:0 12px 6px;height:18px;display:flex;align-items:center;cursor:pointer;position:relative;}
-.pt{position:relative;height:3px;width:100%;background:rgba(255,255,255,.2);border-radius:2px;transition:height .13s;overflow:visible;}
-.pbf{position:absolute;left:0;top:0;height:100%;background:rgba(255,255,255,.32);border-radius:2px;width:0;}
-.ppl{position:absolute;left:0;top:0;height:100%;background:#ff3b30;border-radius:2px;width:0;}
-.pth{position:absolute;top:50%;left:0;width:12px;height:12px;background:#ff3b30;border:2px solid #fff;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(255,59,48,.25),0 0 8px rgba(255,59,48,.4);pointer-events:none;}
-#crow{display:flex;align-items:center;padding:6px 10px 12px;gap:6px;background:rgba(0,0,0,.38);-webkit-backdrop-filter:blur(20px) saturate(200%);backdrop-filter:blur(20px) saturate(200%);border-top:1px solid rgba(255,255,255,.07);}
-.cb{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);box-shadow:0 2px 8px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;flex-shrink:0;padding:0;outline:none;}
-.csp{flex:1;}
-.live-pill{display:flex;align-items:center;gap:5px;padding:4px 9px 4px 7px;border-radius:20px;background:rgba(255,69,69,.13);border:1px solid rgba(255,69,69,.32);font-size:10.5px;font-weight:700;letter-spacing:.6px;color:#ff5a5a;cursor:default;flex-shrink:0;white-space:nowrap;}
-.ldot{width:5px;height:5px;border-radius:50%;background:#ff4545;animation:lblink 1.3s infinite;flex:none;}
-@keyframes lblink{0%,100%{opacity:1}50%{opacity:.3}}
-#bq{border-radius:16px !important;width:auto !important;padding:0 11px !important;height:34px !important;gap:4px;}
-#qlbl{font-size:11.5px;font-weight:700;letter-spacing:.3px;}
-#qmenu{position:absolute;right:10px;bottom:64px;z-index:30;min-width:130px;max-height:60vh;overflow-y:auto;background:rgba(20,20,24,.96);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.55);display:none;opacity:0;transform:translateY(6px);transition:opacity .16s ease, transform .16s ease;}
-#qmenu.open{display:block;opacity:1;transform:translateY(0);}
-#qmenu .qi{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:600;color:rgba(255,255,255,.85);cursor:pointer;white-space:nowrap;}
-#qmenu .qi.active{color:#ff5a5a;background:rgba(255,90,90,.1);}
-#qmenu .qhead{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:6px 10px 8px;}
-#social-badges{position:absolute;top:12px;right:12px;z-index:25;}
-#social-badges a.whatsapp-btn{display:inline-flex;align-items:center;gap:8px;padding:7px 14px 7px 8px;border-radius:50px;background:linear-gradient(135deg,rgba(37,211,102,.95),rgba(18,140,126,.95));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;}
-#social-badges .whatsapp-icon{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;flex:none;}
-#social-badges .whatsapp-icon svg{width:14px;height:14px;fill:#fff;}
+body{
+background:#0a0f1c;
+font-family:'Poppins',sans-serif;
+color:#edf2f7;
+}
+
+button{
+font-family:'Poppins',sans-serif;
+}
+
+.match-tile{
+background:#131d2f;
+border-radius:32px;
+border:1px solid #253247;
+overflow:hidden;
+display:flex;
+flex-direction:column;
+box-shadow:0 15px 30px -10px rgba(0,0,0,0.8);
+transition:.25s;
+}
+
+.match-tile:hover{
+background:#17253b;
+border-color:#3b82f6;
+transform:scale(1.02) translateY(-4px);
+box-shadow:0 25px 40px -8px #1e3a8a40;
+}
+
+.img-wrapper{
+overflow:hidden;
+height:210px;
+position:relative;
+}
+
+.match-img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.live-badge{
+background:#b91c1c;
+color:white;
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+position:absolute;
+top:12px;
+left:12px;
+animation:liveBlink 1s infinite;
+}
+
+@keyframes liveBlink{
+0%{opacity:1;}
+50%{opacity:0.3;}
+100%{opacity:1;}
+}
+
+.scheduled-badge{
+background:rgba(0,0,0,.6);
+color:white;
+font-size:12px;
+padding:4px 10px;
+border-radius:20px;
+position:absolute;
+top:12px;
+left:12px;
+}
+
+.watch-btn{
+background:#2563eb;
+border-radius:50px;
+padding:12px;
+font-weight:600;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+margin-top:12px;
+cursor:pointer;
+}
+
+.watch-btn:hover{
+background:#1d4ed8;
+}
+
+.not-live{
+background:#334155;
+cursor:not-allowed;
+pointer-events:none;
+}
+
+#qualityModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.75);
+backdrop-filter:blur(6px);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+}
+
+#qualityModal.hidden{
+display:none;
+}
+
+#qualityModal .modal-content{
+width:90%;
+max-width:360px;
+background:#111827;
+border-radius:18px;
+padding:22px;
+text-align:center;
+box-shadow:0 20px 40px rgba(0,0,0,.7);
+}
+
+#qualityModal h2{
+font-size:20px;
+font-weight:600;
+margin-bottom:18px;
+color:#f9fafb;
+}
+
+#qualityList{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.quality-item{
+background:#1f2937;
+border-radius:12px;
+padding:14px 16px;
+font-size:16px;
+font-weight:500;
+color:#e5e7eb;
+display:flex;
+align-items:center;
+justify-content:space-between;
+cursor:pointer;
+transition:.2s;
+}
+
+.quality-item::after{
+content:">";
+font-size:12px;
+opacity:.7;
+}
+
+.quality-item:hover{
+background:#2563eb;
+color:white;
+transform:translateY(-1px);
+}
+
+#qualityModal .btn{
+margin-top:16px;
+background:#ef4444;
+color:white;
+border:none;
+border-radius:10px;
+padding:10px;
+font-size:14px;
+font-weight:600;
+cursor:pointer;
+}
+
+#qualityModal .btn:hover{
+background:#dc2626;
+}
+
+*{
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+user-select:none;
+}
+
+*{
+-webkit-tap-highlight-color: transparent;
+}
+
+.match-time{
+font-size:13px;
+color:#9ca3af;
+margin-top:6px;
+}
 </style>
 </head>
-<body>
-<div id="player">
-  <video id="vid" autoplay="" muted="" playsinline="" preload="metadata"></video>
-  <div id="overlay">
-    <div class="load-ring"></div>
-    <div class="load-label">Connecting to stream…</div>
+
+<body class="p-5 max-w-7xl mx-auto">
+
+<!-- HEADER -->
+<div class="text-center mt-4 mb-8">
+  <div class="inline-flex items-center justify-center gap-3 bg-[#131d2f] py-3 px-7 rounded-full border border-blue-900/50">
+    <span class="text-3xl font-black tracking-tight text-white">Sportlink</span>
   </div>
-  <div id="bufspin"><div></div></div>
-  <div id="err-ov">
-    <div class="ec">
-      <div class="ei-wrap"><svg viewBox="0 0 24 24"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path><line x1="12" y1="2" x2="12" y2="12"></line></svg></div>
-      <div class="etxt" id="etitle">Stream Unavailable</div>
-      <div class="emsg" id="emsg"></div>
-      <div class="eretry" id="eretry" style="display:none"><span class="retdot"></span><span>Retrying…</span></div>
-    </div>
-  </div>
-  <div id="bigplay">
-    <div class="bpbtn" id="bpbtn">
-      <svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.72L9.5 4.27A1 1 0 0 0 8 5.14z"></path></svg>
-    </div>
-  </div>
-  <div class="social-badges" id="social-badges">
-    <a href="https://www.whatsapp.com/channel/0029VbC2oQsC6ZvmwpR3v73v" target="_blank" rel="noopener noreferrer" class="whatsapp-btn">
-      <div class="whatsapp-icon">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
-      </div>
-      <span>Join @Sportlink</span>
-    </a>
-  </div>
-  <div id="ctrls">
-    <div id="prog">
-      <div class="pt">
-        <div class="pbf" id="pbuf"></div>
-        <div class="ppl" id="ppl"></div>
-        <div class="pth" id="pth"></div>
-      </div>
-    </div>
-    <div id="crow">
-      <button class="cb" id="bplay" title="Play / Pause">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" id="pico">
-          <rect x="6" y="5" width="4" height="14" rx="1.5"></rect><rect x="14" y="5" width="4" height="14" rx="1.5"></rect>
-        </svg>
-      </button>
-      <button class="cb" id="bvol" title="Mute / Unmute">
-        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" id="vico">
-          <path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"></path>
-          <path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"></path>
-          <path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"></path>
-        </svg>
-      </button>
-      <div class="live-pill" id="livepill"><span class="ldot"></span><span id="lpitext">LIVE</span></div>
-      <div class="csp"></div>
-      <button class="cb" id="bq" title="Quality">
-        <span id="qlbl">540p</span>
-        <svg class="qchev" width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="2,3 5,7 8,3"></polyline></svg>
-      </button>
-      <button class="cb" id="bfill" title="Fit">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" id="fillico"><rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"></rect><rect x="7" y="8" width="10" height="8" rx="1" fill="currentColor" opacity=".45"></rect></svg>
-      </button>
-      <button class="cb" id="bpip" title="Picture in Picture" style="display: none;">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="5" width="18" height="14" rx="2"></rect><rect x="12.5" y="11.5" width="7" height="5" rx="1.5" fill="currentColor" stroke="none"></rect>
-        </svg>
-      </button>
-      <button class="cb" id="bfs" title="Fullscreen">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" id="fsico">
-          <path d="M9 4H4v5"></path><path d="M15 4h5v5"></path><path d="M9 20H4v-5"></path><path d="M15 20h5v-5"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-  <div id="qmenu" role="menu" aria-label="Quality">
-    <div class="qhead">Quality</div>
-    <div id="qlist"></div>
+  <p class="text-gray-500 text-sm mt-3 tracking-wide">FANCODE LIVE WEB</p>
+</div>
+
+<!-- MATCH GRID -->
+<div id="matches-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6"></div>
+
+<!-- QUALITY SELECTION MODAL -->
+<div id="qualityModal" class="hidden">
+  <div class="modal-content">
+    <h2>Select Quality</h2>
+    <div id="qualityList"></div>
+    <button onclick="closeQuality()" class="btn">Close</button>
   </div>
 </div>
+
 <script>
-(function(){
-'use strict';
-var JSON_URL  = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
-var LANG_MAP  = {eng:'ENGLISH',hin:'HINDI',tam:'TAMIL',tel:'TELUGU',ben:'BENGALI',mar:'MARATHI'};
-var Q_ORDER   = ['1080p','720p','540p','480p','360p','240p'];
-var DEFAULT_Q = '540p';
+const DATA_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
+const PLAYER_URL = 'fc-play.html?data=';
+const container = document.getElementById("matches-container");
 
-var sp = new URLSearchParams(location.search);
-var idp = sp.get('id')||'';
-var si  = parseInt(sp.get('s')||'0',10);
-var ui  = idp.indexOf('_');
-var matchId  = ui>-1 ? idp.slice(0,ui) : idp;
-var langCode = ui>-1 ? idp.slice(ui+1) : 'eng';
+let allMatches = [];
 
-var vid      = document.getElementById('vid');
-var player   = document.getElementById('player');
-var overlay  = document.getElementById('overlay');
-var bufspin  = document.getElementById('bufspin');
-var errOv    = document.getElementById('err-ov');
-var ctrls    = document.getElementById('ctrls');
-var prog     = document.getElementById('prog');
-var pbuf     = document.getElementById('pbuf');
-var ppl      = document.getElementById('ppl');
-var pth      = document.getElementById('pth');
-var bplay    = document.getElementById('bplay');
-var pico     = document.getElementById('pico');
-var bvol     = document.getElementById('bvol');
-var vico     = document.getElementById('vico');
-var livepill = document.getElementById('livepill');
-var lpitext  = document.getElementById('lpitext');
-var bq       = document.getElementById('bq');
-var qlbl     = document.getElementById('qlbl');
-var bfill    = document.getElementById('bfill');
-var fillico  = document.getElementById('fillico');
-var bpip     = document.getElementById('bpip');
-var bfs      = document.getElementById('bfs');
-var fsico    = document.getElementById('fsico');
-var bigplay  = document.getElementById('bigplay');
-var bpbtn    = document.getElementById('bpbtn');
-var qmenu    = document.getElementById('qmenu');
-var qlist    = document.getElementById('qlist');
+fetch(DATA_URL)
+  .then(res => res.json())
+  .then(data => {
+    allMatches = data.matches || [];
+    container.innerHTML = "";
 
-var shakaPlayer = null;
-var qStreams = {}, currentQ = DEFAULT_Q;
-var isLive = true, isDragging = false, uPaused = false, hasError = false;
-var fillModeIdx = 0, isMuted = true;
-var hideTimer = null, retryTimer = null;
-var playerActivated = false;
+    const matches = allMatches.sort((a, b) => {
+      const aLive = (a.status || "").toUpperCase() === "LIVE";
+      const bLive = (b.status || "").toUpperCase() === "LIVE";
+      return bLive - aLive;
+    });
 
-var FILL_MODES = [
-  {fit:'contain', scale:1,   title:'Fit', icon:'<rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><rect x="7" y="8" width="10" height="8" rx="1" fill="currentColor" opacity=".45"/>'},
-  {fit:'cover',   scale:1,   title:'Fill', icon:'<rect x="2" y="4" width="20" height="16" rx="2" fill="currentColor" opacity=".2" stroke="currentColor" stroke-width="1.7"/><path d="M2 4l20 16M22 4L2 20" stroke="currentColor" stroke-width="1" opacity=".35"/>'},
-  {fit:'contain', scale:1.4, title:'Zoom', icon:'<circle cx="10.5" cy="10.5" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><line x1="16" y1="16" x2="21.5" y2="21.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="10.5" y1="7.5" x2="10.5" y2="13.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="7.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}
-];
-
-function showLoad(){hasError=false;overlay.classList.remove('gone');overlay.style.opacity='1';overlay.style.pointerEvents='none';errOv.classList.remove('show');}
-function hideOverlay(){if(hasError) return;overlay.style.opacity='0';overlay.style.pointerEvents='none';setTimeout(function(){overlay.classList.add('gone');},360);}
-function showErr(title,msg,retry){hasError=true;overlay.style.opacity='0';overlay.style.pointerEvents='none';setTimeout(function(){overlay.classList.add('gone');},360);document.getElementById('etitle').textContent=title;document.getElementById('emsg').textContent=msg||'';document.getElementById('eretry').style.display=retry?'flex':'none';errOv.classList.add('show');}
-
-vid.addEventListener('waiting', function(){bufspin.style.display='block';});
-vid.addEventListener('playing', function(){bufspin.style.display='none';});
-vid.addEventListener('canplay', function(){bufspin.style.display='none';});
-
-function syncBig(){if(vid.paused){bigplay.classList.add('shown');bigplay.classList.remove('gone');}else{bigplay.classList.remove('shown');bigplay.classList.add('gone');}}
-bpbtn.addEventListener('click', function(e){e.stopPropagation();uPaused=false;playerActivated=true;vid.play().catch(function(){});});
-vid.addEventListener('play', syncBig);
-vid.addEventListener('pause', syncBig);
-
-player.addEventListener('click', function(e){
-  if(e.target.closest('#crow')||e.target.closest('.bpbtn')||e.target.closest('#qmenu')||e.target.closest('#social-badges')) return;
-  if(!playerActivated){playerActivated=true;showCtrls();return;}
-  if(e.target===vid||e.target===player){if(ctrls.classList.contains('gone')){showCtrls();return;}togglePlay();}
-});
-
-function showCtrls(){ctrls.classList.remove('gone');clearTimeout(hideTimer);if(!vid.paused){hideTimer=setTimeout(function(){ctrls.classList.add('gone');},3200);}}
-player.addEventListener('mousemove', showCtrls);
-player.addEventListener('touchstart', showCtrls, {passive:true});
-showCtrls();
-
-function togglePlay(){if(vid.paused){uPaused=false;vid.play().catch(function(){});}else{uPaused=true;vid.pause();}}
-bplay.addEventListener('click', function(e){e.stopPropagation();togglePlay();});
-function syncPlayIcon(){pico.innerHTML=vid.paused?'<path d="M8 5.14v13.72a1 1 0 0 0 1.5.87l11-6.86a1 1 0 0 0 0-1.72L9.5 4.27A1 1 0 0 0 8 5.14z" fill="currentColor"/>':'<rect x="6" y="5" width="4" height="14" rx="1.5" fill="currentColor"/><rect x="14" y="5" width="4" height="14" rx="1.5" fill="currentColor"/>';}
-vid.addEventListener('play', function(){syncPlayIcon();showCtrls();});
-vid.addEventListener('pause', function(){syncPlayIcon();showCtrls();});
-
-bvol.addEventListener('click', function(e){e.stopPropagation();vid.muted=!vid.muted;syncVol();});
-function syncVol(){isMuted=vid.muted;bvol.classList.toggle('is-muted',isMuted);vico.innerHTML=isMuted?'<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><line x1="16.5" y1="9.5" x2="22.5" y2="15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><line x1="22.5" y1="9.5" x2="16.5" y2="15.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>':'<path d="M4 9v6h4l5 5V4L8 9H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/><path d="M19 6a9 9 0 0 1 0 12" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" fill="none"/>';}
-
-livepill.addEventListener('click', function(){if(!isLive||!vid.seekable||!vid.seekable.length)return;vid.currentTime=vid.seekable.end(vid.seekable.length-1);uPaused=false;if(vid.paused)vid.play().catch(function(){});});
-
-vid.addEventListener('timeupdate', function(){if(isDragging)return;var p=(vid.duration&&isFinite(vid.duration))?vid.currentTime/vid.duration*100:99.5;setP(p);});
-vid.addEventListener('progress', function(){if(!vid.buffered.length||!isFinite(vid.duration))return;pbuf.style.width=(vid.buffered.end(vid.buffered.length-1)/vid.duration*100)+'%';});
-vid.addEventListener('loadedmetadata', function(){isLive=!isFinite(vid.duration)||vid.duration>86400;if(!isLive)livepill.style.display='none';});
-function setP(p){p=Math.max(0,Math.min(100,p));ppl.style.width=p+'%';pth.style.left=p+'%';}
-function spct(e){var r=prog.getBoundingClientRect(),x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;return Math.max(0,Math.min(1,x/r.width));}
-function applySeek(f){if(!isFinite(vid.duration))return;vid.currentTime=f*vid.duration;setP(f*100);}
-prog.addEventListener('mousedown', function(e){isDragging=true;prog.classList.add('drag');applySeek(spct(e));});
-prog.addEventListener('touchstart', function(e){isDragging=true;prog.classList.add('drag');applySeek(spct(e));},{passive:true});
-document.addEventListener('mousemove', function(e){if(isDragging)applySeek(spct(e));});
-document.addEventListener('touchmove', function(e){if(isDragging){e.preventDefault();applySeek(spct(e));}},{passive:false});
-document.addEventListener('mouseup', function(){if(isDragging){isDragging=false;prog.classList.remove('drag');}});
-document.addEventListener('touchend', function(){if(isDragging){isDragging=false;prog.classList.remove('drag');}});
-
-function renderQMenu(){var avail=Q_ORDER.filter(function(q){return qStreams[q];});qlist.innerHTML='';avail.forEach(function(q){var row=document.createElement('div');row.className='qi'+(q===currentQ?' active':'');row.innerHTML='<span>'+q+'</span>';row.addEventListener('click',function(ev){ev.stopPropagation();closeQMenu();if(q!==currentQ)switchQ(q);});qlist.appendChild(row);});}
-function openQMenu(){renderQMenu();qmenu.classList.add('open');}
-function closeQMenu(){qmenu.classList.remove('open');}
-bq.addEventListener('click', function(e){e.stopPropagation();e.preventDefault();if(qmenu.classList.contains('open')){closeQMenu();return;}openQMenu();});
-document.addEventListener('click', function(e){if(!qmenu.classList.contains('open'))return;if(qmenu.contains(e.target)||bq.contains(e.target))return;closeQMenu();});
-function switchQ(q){if(!qStreams[q])return;currentQ=q;qlbl.textContent=q;loadStream(qStreams[q],[]); }
-
-function applyFillMode(idx){var m=FILL_MODES[idx];vid.style.objectFit=m.fit;vid.style.transform=m.scale!==1?'scale('+m.scale+')':'none';fillico.innerHTML=m.icon;bfill.title=m.title;}
-applyFillMode(0);
-bfill.addEventListener('click', function(e){e.stopPropagation();fillModeIdx=(fillModeIdx+1)%FILL_MODES.length;applyFillMode(fillModeIdx);});
-
-bfs.addEventListener('click', function(e){
-  e.stopPropagation();
-  var inFs=!!(document.fullscreenElement||document.webkitFullscreenElement);
-  if(!inFs){var req=player.requestFullscreen||player.webkitRequestFullscreen;if(req)req.call(player).catch(function(){});}
-  else{var ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document).catch(function(){});}
-});
-
-async function tryShaka(url){
-  if(shakaPlayer){try{await shakaPlayer.destroy();}catch(e){}shakaPlayer=null;}
-  shakaPlayer=new shaka.Player();
-  await shakaPlayer.attach(vid);
-  shakaPlayer.configure({streaming:{bufferingGoal:10,rebufferingGoal:2,safeSeekOffset:5,lowLatencyMode:true}});
-  shakaPlayer.getNetworkingEngine().registerRequestFilter(function(t,req){req.allowCrossSiteCredentials=true;});
-  await shakaPlayer.load(url);
-}
-
-async function loadStream(url,fallbacks){
-  hasError=false;
-  shaka.polyfill.installAll();
-  var all=[url].concat((fallbacks||[]).filter(function(u){return u&&u!==url;}));
-  var lastErr=null;
-  if(shaka.Player.isBrowserSupported()){
-    for(var i=0;i<all.length;i++){
-      if(!all[i]) continue;
-      try{await tryShaka(all[i]);lastErr=null;break;}catch(e){
-        lastErr='Shaka Error: ' + (e.message || JSON.stringify(e));
-      }
-    }
-  } else {lastErr='Browser not supported';}
-  if(lastErr){showErr('Playback Error',lastErr,false);return;}
-  vid.muted=true;
-  await vid.play().catch(function(){});
-  syncVol();
-  var onP=function(){vid.removeEventListener('playing',onP);hideOverlay();};
-  vid.addEventListener('playing',onP);
-  setTimeout(function(){if(!hasError)hideOverlay();},9000);
-}
-
-function fetchJSON(url){
-  return new Promise(function(res,rej){
-    var x=new XMLHttpRequest();
-    x.open('GET',url,true);
-    x.timeout=12000;
-    x.onreadystatechange=function(){
-      if(x.readyState!==4)return;
-      if(x.status>=200&&x.status<300){try{res(JSON.parse(x.responseText));}catch(e){rej(new Error('JSON parse error'));}}
-      else rej(new Error('HTTP '+x.status));
-    };
-    x.onerror=function(){rej(new Error('Network error'));};
-    x.send();
+    matches.forEach((m, index) => {
+      const isLive = (m.status || "").toUpperCase() === "LIVE";
+      const img = m.image || "https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg";
+      const card = document.createElement("div");
+      card.className = "match-tile";
+      card.innerHTML = `
+        <div class="img-wrapper">
+          <img src="${img}" class="match-img">
+          ${isLive
+            ? '<span class="live-badge"><i class="fas fa-circle"></i> LIVE</span>'
+            : '<span class="scheduled-badge"><i class="far fa-calendar"></i> SCHEDULED</span>'}
+        </div>
+        <div class="p-5 flex flex-col flex-1">
+          <h3 class="text-xl font-bold">${m.title || 'Match'}</h3>
+          <div class="text-sm text-gray-400 mt-2">${m.tournament || ''}</div>
+          <div class="match-time">${formatDate(m.startTime)}</div>
+          ${isLive
+            ? `<div onclick="openQuality(${index})" class="watch-btn"><i class="fas fa-play"></i> WATCH NOW</div>`
+            : `<div class="watch-btn not-live"><i class="far fa-clock"></i> NOT LIVE</div>`}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  })
+  .catch(() => {
+    container.innerHTML = "<p class='text-center col-span-full'>Failed to load matches</p>";
   });
-}
 
-function resolve(data){
-  var list=Array.isArray(data)?data:(Array.isArray(data.matches)?data.matches:[]);
-  if(!list.length) throw new Error('No matches found in JSON');
-  var m=null;
-  for(var i=0;i<list.length;i++)if(String(list[i].match_id)===String(matchId)){m=list[i];break;}
-  if(!m)throw new Error('Match ID "'+matchId+'" not found in JSON');
-  var s=m.streams||{};
-  var fb=[s.primary,s.fancode_cdn].filter(Boolean);
-  if(si===0){
-    var as=m.auto_streams||{};
-    var keys=Object.keys(as);
-    if(!keys.length) throw new Error('No auto streams available for this match');
-    var lang=LANG_MAP[langCode]||keys[0];
-    var al=as[lang]||as[keys[0]];
-    if(!al||!al.streams) throw new Error('Streams object missing for language');
-    return{type:'multi',streams:al.streams,fallbacks:fb};
+function formatDate(time) {
+  if (!time) return "";
+  // Try to parse "07:00:00 AM 10-09-2026" format
+  const parts = time.match(/(\d{2}):(\d{2}):(\d{2})\s*(AM|PM)\s*(\d{2})-(\d{2})-(\d{4})/i);
+  if (parts) {
+    let [, hh, mm, ss, ampm, dd, mo, yyyy] = parts;
+    hh = parseInt(hh, 10);
+    if (ampm.toUpperCase() === 'PM' && hh < 12) hh += 12;
+    if (ampm.toUpperCase() === 'AM' && hh === 12) hh = 0;
+    const d = new Date(yyyy, parseInt(mo, 10) - 1, parseInt(dd, 10), hh, parseInt(mm, 10), parseInt(ss, 10));
+    return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
   }
-  return{type:'single',url:s.fancode_lk_cdn,fallbacks:fb};
+  const d = new Date(time);
+  if (isNaN(d)) return time;
+  return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 }
 
-(function start(){
-  showLoad();
-  if(!matchId){showErr('Missing match ID','URL: ?id=MATCHID_lang',false);return;}
-  fetchJSON(JSON_URL).then(function(data){
-    var r=resolve(data);
-    if(r.type==='multi'){
-      qStreams=r.streams;
-      var url=r.streams[DEFAULT_Q]||r.streams['720p']||r.streams['480p']||r.streams['1080p']||r.streams['360p'];
-      if(!url) throw new Error('No valid stream URL found');
-      currentQ=Q_ORDER.find(function(q){return r.streams[q]===url;})||DEFAULT_Q;
-      qlbl.textContent=currentQ;
-      bq.style.display='';
-      loadStream(url,r.fallbacks);
-    }else{
-      bq.style.display='none';
-      loadStream(r.url,r.fallbacks);
-    }
-  }).catch(function(e){showErr('Could not load data',e.message,true);});
-})();
-})();
+function openQuality(index) {
+  const match = allMatches[index];
+  // Use auto_streams: { ENGLISH: { streams: { "1080p": url, ... } } }
+  const streams = match.auto_streams && match.auto_streams.ENGLISH && match.auto_streams.ENGLISH.streams;
+  if (!streams || Object.keys(streams).length === 0) {
+    alert("Stream not available");
+    return;
+  }
+
+  const list = document.getElementById("qualityList");
+  list.innerHTML = "";
+
+  // Sort qualities high to low
+  const order = ['1080p','720p','540p','480p','360p','240p'];
+  const sortedKeys = Object.keys(streams).sort((a, b) => order.indexOf(b) - order.indexOf(a));
+
+  sortedKeys.forEach(q => {
+    const btn = document.createElement("div");
+    btn.className = "quality-item";
+    btn.innerText = q;
+    btn.onclick = function () {
+      const encoded = btoa(streams[q]);
+      window.location.href = PLAYER_URL + encodeURIComponent(encoded);
+    };
+    list.appendChild(btn);
+  });
+
+  document.getElementById("qualityModal").classList.remove("hidden");
+}
+
+function closeQuality() {
+  document.getElementById("qualityModal").classList.add("hidden");
+}
 </script>
-</body></html>
+  <script async src="https://pl31358401.profitableratecpmnetwork.com/a3/81/41/a38141b4ff99f6ef8dbf9dc5f76bd86b.js"></script>
+
+</body>
+</html>
