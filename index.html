@@ -208,7 +208,7 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
 }
 </style>
 <body>
-<div class="startup-tg-overlay" id="startupTgModal">
+<div class="startup-tg-overlay show" id="startupTgModal" onclick="if(event.target === this) closeStartupTgModal()">
   <div class="startup-tg-box">
     <div class="startup-tg-icon">
       <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.19-.08-.05-.19-.02-.27 0-.11.03-1.84 1.18-5.21 3.45-.49.33-.94.49-1.35.48-.45-.01-1.31-.25-1.95-.46-.79-.26-1.42-.4-1.36-.84.03-.23.35-.47.96-.73 3.77-1.64 6.29-2.73 7.55-3.25 3.59-1.49 4.33-1.75 4.81-1.76.11 0 .35.03.48.14.11.09.14.22.15.34-.01.07-.01.19-.02.26z"/></svg>
@@ -216,7 +216,7 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
     <h3 class="startup-tg-title">Join Telegram</h3>
     <p class="startup-tg-desc">Join on Telegram for free streaming links and never miss a match!</p>
     <a class="startup-tg-btn-main" href="https://t.me/+m4odTq36LL4xNmI1" target="_blank" rel="noopener">JOIN NOW ↗</a>
-    <button class="startup-tg-btn-sub" onclick="closeStartupTgModal()">I've joined</button>
+    <button class="startup-tg-btn-sub" type="button" onclick="closeStartupTgModal()">I've joined</button>
   </div>
 </div>
 
@@ -440,6 +440,8 @@ function renderEverything(){
 }
 </script>
 <script>
+function closeStartupTgModal(){ $("startupTgModal").classList.remove("show"); }
+
 function openMatch(i){
   selectedMatch = allMatches[i];
   if(!selectedMatch) return;
@@ -641,6 +643,6 @@ function goSchedule(){ showPage("schedulePage"); setActive("schedule"); renderSc
 function openSport(name){ showPage("sportPage"); setActive("sports"); const list = allMatches.filter(m => getCategory(m)===name); $("sportTitle").textContent = name + "."; $("sportSubtitle").textContent = `${list.length} events`; $("sportGrid").innerHTML = list.map((m, idx) => matchPoster(m, idx)).join(""); }
 
 window.addEventListener("scroll", ()=>{ $("nav").classList.toggle("scrolled", scrollY>25); });
-window.addEventListener("DOMContentLoaded", () => { setTimeout(() => $("startupTgModal").classList.add("show"), 400); loadFeed(); });
+window.addEventListener("DOMContentLoaded", () => { loadFeed(); });
 </script>
 </html>
