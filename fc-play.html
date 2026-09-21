@@ -86,6 +86,56 @@ margin-bottom:12px;
 100%{transform:rotate(360deg)}
 }
 
+/* Custom Share Button Overlay */
+.share-btn-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background: rgba(19, 29, 47, 0.8);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  transition: 0.2s;
+}
+
+.share-btn-overlay:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+}
+
+/* Toast Notification for Link Copied */
+#toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 3000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 /* Telegram Modal Modern Floating & 1s Fade Animations */
 #telegramModal, #alertModal {
   position: fixed;
@@ -166,12 +216,21 @@ user-select:none;
 <div class="video-container">
   <div class="shaka-video-container" data-shaka-player>
     <video id="video" autoplay playsinline muted></video>
+    
+    <!-- Floating Share Button -->
+    <button onclick="shareStream()" class="share-btn-overlay">
+      <i class="fas fa-share-alt"></i> Share Stream
+    </button>
+
     <div id="loading" class="loading-overlay">
       <div class="spinner"></div>
       Analyzing the video...
     </div>
   </div>
 </div>
+
+<!-- Toast Notification -->
+<div id="toast">Stream link copied to clipboard!</div>
 
 <!-- TELEGRAM JOIN MODAL -->
 <div id="telegramModal">
@@ -180,7 +239,7 @@ user-select:none;
       <i class="fas fa-times"></i>
     </button>
     <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30 transform hover:rotate-6 transition">
-      <i class="fab fa-telegram-plane"></i>
+      <i class="fab fa-telegram-plane">**</i>
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
@@ -241,6 +300,30 @@ function closeAlertModal() {
   setTimeout(() => {
     alertModal.style.display = 'none';
   }, 1000);
+}
+
+function shareStream() {
+  const shareUrl = window.location.href;
+  
+  if (navigator.share) {
+    navigator.share({
+      title: 'CRICXCRATE LIVE',
+      text: 'Watch this live match on CricXCrate!',
+      url: shareUrl,
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      showToast();
+    });
+  }
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
 }
 
 async function initPlayer(){
