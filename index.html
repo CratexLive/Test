@@ -157,26 +157,14 @@ button:active, .live-card:active, .match-poster:active, .schedule-line:active, .
 .access-title{margin-top:8px;font-family:"Space Grotesk";font-size:25px;}
 .access-text{margin-top:7px;color:#696b64;font-size:9px;line-height:1.6;}
 
-.player-modal-wrapper{position:fixed;z-index:99999;inset:0;width:100vw;height:100vh;background:var(--black);display:flex;flex-direction:column;justify-content:flex-start;overflow-y:auto;animation:scaleIn .3s cubic-bezier(0.16,1,0.3,1);padding-bottom:60px;}
-.player-top-nav{height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;background:rgba(6,7,5,.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;}
-.player-top-brand{font-family:"Space Grotesk";font-size:14px;font-weight:700;color:var(--cream);letter-spacing:-.5px;}
-.player-close-action{background:rgba(255,255,255,0.06);color:var(--cream);border:1px solid var(--line);padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:700;font-family:"Space Grotesk";font-size:9px;transition:.3s;}
-.player-close-action:hover{background:var(--lime);color:var(--black);border-color:var(--lime);}
-.player-content-body{width:min(1300px,calc(100% - 48px));margin:30px auto 0;display:flex;flex-direction:column;gap:24px;}
-.player-rig-box{width:100%;aspect-ratio:16/9;position:relative;background:#000;overflow:hidden;border-radius:18px;border:1px solid rgba(216,255,62,0.3);box-shadow:0 30px 80px rgba(0,0,0,0.8);isolation:isolate;}
-iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:relative;z-index:5;border-radius:inherit;}
-.player-rig-box.fs-active{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;max-height:none!important;z-index:9999999!important;border-radius:0!important;border:none!important;transform:none!important;background:#000!important;}
-.player-meta-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:4px 0;flex-wrap:wrap;}
-.stream-title-group{display:flex;flex-direction:column;gap:6px;}
-.stream-title-group strong{font-family:"Space Grotesk";font-size:22px;font-weight:700;color:var(--cream);letter-spacing:-.5px;}
-.stream-title-group span{font-family:"Space Grotesk";color:var(--soft);font-size:9px;letter-spacing:1.5px;font-weight:700;text-transform:uppercase;}
-.share-action-btn{height:44px;padding:0 26px;display:inline-flex;align-items:center;gap:8px;border-radius:100px;background:rgba(242,239,228,.04);border:1px solid rgba(216,255,62,0.3);color:var(--cream);font-family:"Space Grotesk";font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(16px);transition:.3s ease;}
-.share-action-btn:hover{background:var(--lime);color:var(--black);border-color:var(--lime);box-shadow:0 10px 30px var(--lime-glow);transform:translateY(-2px);}
-.player-community-card{margin-top:20px;background:var(--black2);border:1px solid var(--line);border-radius:20px;padding:36px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
-.player-comm-title{font-family:"Space Grotesk";font-size:28px;font-weight:700;letter-spacing:-1px;}
-.player-comm-title span{color:var(--soft);}
-.comm-join-btn{height:46px;padding:0 28px;background:var(--lime);color:var(--black);font-family:"Space Grotesk";font-size:9px;font-weight:800;letter-spacing:1px;border-radius:100px;text-decoration:none;display:inline-flex;align-items:center;transition:.3s;}
-.comm-join-btn:hover{background:#e8ff78;transform:translateY(-2px);box-shadow:0 10px 25px var(--lime-glow);}
+#qualityModal{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:999999;}
+#qualityModal.hidden{display:none;}
+.modal-content{width:90%;max-width:360px;background:#111827;border-radius:18px;padding:22px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.7);border:1px solid rgba(216,255,62,0.2);}
+.modal-content h2{font-size:20px;font-weight:600;margin-bottom:18px;color:#f9fafb;font-family:"Space Grotesk";}
+#qualityList{display:flex;flex-direction:column;gap:10px;}
+.quality-item{background:#1f2937;border-radius:12px;padding:14px 16px;font-size:16px;font-weight:500;color:#e5e7eb;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.2s;}
+.quality-item:hover{background:var(--lime);color:var(--black);transform:translateY(-1px);}
+.modal-close-btn{margin-top:16px;background:#ef4444;color:white;border:none;border-radius:10px;padding:10px;font-size:14px;font-weight:600;cursor:pointer;width:100%;}
 
 .search{position:fixed;z-index:1500;inset:0;display:none;background:rgba(6,7,5,.97);backdrop-filter:blur(30px);}
 .search.open{display:block;animation:scaleIn .25s;}
@@ -202,11 +190,9 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
   .mobile-nav button{color:#64665f;background:none;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:7px;font-weight:700;}
   .mobile-nav button.active{color:var(--lime);}
   .mobile-nav svg{width:15px;}
-  .player-content-body{width:calc(100% - 24px);margin-top:20px;}
-  .player-community-card{padding:24px 20px;}
-  .player-comm-title{font-size:20px;}
 }
 </style>
+</head>
 <body>
 <div class="startup-tg-overlay show" id="startupTgModal" onclick="if(event.target === this) closeStartupTgModal()">
   <div class="startup-tg-box">
@@ -302,6 +288,14 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
   <div class="match-bottom"><div class="access-box"><div class="access-label">CRICXCRATE ACCESS</div><div class="access-title">Your match. Your screen.</div><div class="access-text">Stream high-definition live sporting events smoothly through the CricxCrate media network.</div></div></div>
 </div>
 
+<div id="qualityModal" class="hidden">
+  <div class="modal-content">
+    <h2>Select Quality</h2>
+    <div id="qualityList"></div>
+    <button onclick="closeQuality()" class="modal-close-btn">Close</button>
+  </div>
+</div>
+
 <div class="search" id="search"><div class="search-inner"><button class="search-close" onclick="closeSearch()">← CLOSE</button><input id="searchInput" class="search-input" placeholder="Search." autocomplete="off"><div id="searchResults" class="search-results"></div></div></div>
 
 <nav class="mobile-nav">
@@ -312,8 +306,7 @@ iframe#playerFrame{width:100%;height:100%;border:none;display:block;position:rel
 </nav>
 <script>
 const DATA_URL = 'https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json';
-const PROXY_URL = 'proxy.js?u=';
-const TELEGRAM = "https://t.me/+m4odTq36LL4xNmI1";
+const PLAYER_URL = 'fc-play.html?data=';
 let allMatches = []; let selectedMatch = null; let heroTimer = null; let heroIndex = 0;
 const $ = id => document.getElementById(id);
 
@@ -453,7 +446,7 @@ function openMatch(i){
   
   const actionContainer = $("matchActionContainer");
   if(isLive){
-    actionContainer.innerHTML = `<button class="watch" onclick="startWatch()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH LIVE</button>`;
+    actionContainer.innerHTML = `<button class="watch" onclick="openQualityModal()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>WATCH LIVE</button>`;
   } else {
     actionContainer.innerHTML = `<div style="color:var(--soft); font-size:9px; font-weight:700; background:rgba(255,255,255,0.04); border:1px solid var(--line); display:inline-block; padding:12px 20px; border-radius:10px;">⏳ MATCH COMMENCING SOON · STAY TUNED</div>`;
   }
@@ -462,167 +455,33 @@ function openMatch(i){
 }
 
 function closeMatch(){ $("matchLayer").classList.remove("open"); document.body.style.overflow=""; }
-function closePlayerModal(){
-  const playerLayer = document.getElementById("playerModalLayer");
-  if(playerLayer) playerLayer.remove();
-  document.body.style.overflow="";
-}
 
-function startWatch(){
-  closeMatch();
+function openQualityModal(){
   if(!selectedMatch) return;
-  
   const streams = selectedMatch.auto_streams && selectedMatch.auto_streams.ENGLISH && selectedMatch.auto_streams.ENGLISH.streams;
   if(!streams || Object.keys(streams).length === 0){
     alert("Stream not available");
     return;
   }
-
-  const qualityMap = {};
-  const qualityOptions = [];
+  const list = $("qualityList");
+  list.innerHTML = "";
   const order = ['1080p','720p','540p','480p','360p','240p'];
   const sortedKeys = Object.keys(streams).sort((a, b) => order.indexOf(b) - order.indexOf(a));
 
   sortedKeys.forEach(q => {
-    const h = parseInt(q, 10) || 720;
-    qualityMap[h] = PROXY_URL + encodeURIComponent(streams[q]);
-    if(!qualityOptions.includes(h)) qualityOptions.push(h);
+    const btn = document.createElement("div");
+    btn.className = "quality-item";
+    btn.innerHTML = `<span>${q}</span><span>></span>`;
+    btn.onclick = function () {
+      const encoded = btoa(streams[q]);
+      window.location.href = PLAYER_URL + encodeURIComponent(encoded);
+    };
+    list.appendChild(btn);
   });
-
-  let playerLayer = document.getElementById("playerModalLayer");
-  if(!playerLayer){ playerLayer = document.createElement("div"); playerLayer.id = "playerModalLayer"; document.body.appendChild(playerLayer); }
-  
-  const cleanTitle = (selectedMatch.title || "Live Stream").replace(/\[.*?\]/g, "").trim();
-  const tournamentText = selectedMatch.tournament || getCategory(selectedMatch);
-
-  playerLayer.innerHTML = `
-    <div class="player-modal-wrapper">
-      <header class="player-top-nav">
-        <div class="player-top-brand">CricxCrate</div>
-        <button class="player-close-action" onclick="closePlayerModal()">✕ CLOSE</button>
-      </header>
-      <div class="player-content-body">
-        <div class="player-rig-box" id="playerContainer">
-          <iframe id="playerFrame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen="true"></iframe>
-        </div>
-        <div class="player-meta-bar">
-          <div class="stream-title-group">
-            <strong>${esc(cleanTitle)}</strong>
-            <span>${esc(tournamentText)} · CricxCrate Exclusive Access</span>
-          </div>
-          <button class="share-action-btn" id="btnShare">
-            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"></polyline></svg>
-            <span id="shareBtnText">SHARE STREAM</span>
-          </button>
-        </div>
-        <div class="player-community-card">
-          <div class="player-comm-title">Stay connected.<br><span>Never miss a match.</span></div>
-          <a class="comm-join-btn" href="${TELEGRAM}" target="_blank" rel="noopener">JOIN COMMUNITY ↗</a>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.style.overflow = "hidden";
-
-  playerLayer.querySelector("#btnShare").addEventListener("click", async () => {
-    try {
-      const shareUrl = window.location.href;
-      if (navigator.share) {
-        await navigator.share({ title: cleanTitle, url: shareUrl });
-      } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(shareUrl);
-        const txt = playerLayer.querySelector("#shareBtnText");
-        txt.textContent = "COPIED!";
-        setTimeout(() => txt.textContent = "SHARE STREAM", 1800);
-      }
-    } catch(e){}
-  });
-
-  const iframe = playerLayer.querySelector('#playerFrame');
-  iframe.srcdoc = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; -webkit-tap-highlight-color: transparent; position: relative; }
-        video { width: 100%; height: 100%; object-fit: contain; background: #000; }
-        :root { --plyr-color-main: #d8ff3e; }
-        .plyr input[type=range], .plyr__control { touch-action: manipulation; cursor: pointer; position: relative; z-index: 10; }
-        .plyr__controls { padding: 12px; z-index: 10; }
-      </style>
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.7.8/dist/plyr.css" />
-      <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"><\/script>
-      <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"><\/script>
-    </head>
-    <body>
-      <video id="vid" controls crossorigin playsinline></video>
-      <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          const video = document.getElementById('vid');
-          const qMap = ${JSON.stringify(qualityMap)};
-          const qOptions = ${JSON.stringify(qualityOptions)};
-          let currentSource = qMap[qOptions[0]];
-          let playerInstance = null;
-          let hlsInstance = null;
-
-          function initPlayer(src) {
-            if (hlsInstance) { hlsInstance.destroy(); }
-            
-            if (Hls.isSupported()) {
-              const hls = new Hls({ maxBufferLength: 30, enableWorker: true });
-              hls.loadSource(src);
-              hls.attachMedia(video);
-              hlsInstance = hls;
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              video.src = src;
-            }
-
-            if (!playerInstance) {
-              playerInstance = new Plyr(video, { 
-                autoplay: true,
-                controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'settings', 'fullscreen'],
-                settings: ['quality', 'speed'],
-                quality: {
-                  default: qOptions[0],
-                  options: qOptions,
-                  forced: true,
-                  onChange: (newQuality) => {
-                    const targetUrl = qMap[newQuality];
-                    if (targetUrl && targetUrl !== currentSource) {
-                      currentSource = targetUrl;
-                      const currentTime = video.currentTime;
-                      initPlayer(targetUrl);
-                      video.currentTime = currentTime;
-                    }
-                  }
-                },
-                speed: { selected: 1, options: [0.5, 1, 1.25, 1.5] },
-                fullscreen: { enabled: true, fallback: true, iosNative: true }
-              });
-              
-              playerInstance.on('enterfullscreen', () => window.parent.postMessage('cricxcrate-fs-enter', '*'));
-              playerInstance.on('exitfullscreen', () => window.parent.postMessage('cricxcrate-fs-exit', '*'));
-            }
-            video.play().catch(()=>{});
-          }
-
-          initPlayer(currentSource);
-        });
-      <\/script>
-    </body>
-    </html>
-  `;
+  $("qualityModal").classList.remove("hidden");
 }
 
-window.addEventListener('message', (e) => {
-  if (e.data === 'cricxcrate-fs-enter') {
-    const rig = document.getElementById("playerContainer");
-    if(rig) { rig.classList.add('fs-active'); if (rig.requestFullscreen) rig.requestFullscreen().catch(()=>{}); }
-  } else if (e.data === 'cricxcrate-fs-exit') {
-    const rig = document.getElementById("playerContainer");
-    if(rig) { rig.classList.remove('fs-active'); if (document.fullscreenElement) document.exitFullscreen().catch(()=>{}); }
-  }
-});
+function closeQuality(){ $("qualityModal").classList.add("hidden"); }
 
 function openSearch(){ $("search").classList.add("open"); $("searchInput").value=""; setTimeout(() => $("searchInput").focus(), 100); }
 function closeSearch(){ $("search").classList.remove("open"); }
