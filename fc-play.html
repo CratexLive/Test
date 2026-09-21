@@ -7,72 +7,136 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
 <style>
-html,body{margin:0;padding:0;background:#000;height:100%;width:100%;overflow:hidden;font-family:sans-serif;}
-.video-container{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;}
-.shaka-video-container{width:100%;height:100%;}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{--black:#060705;--black2:#0f110d;--cream:#f2efe4;--soft:#b8b6aa;--line:rgba(242,239,228,.1);--lime:#d8ff3e;--lime-glow:rgba(216,255,62,.3);}
+html,body{margin:0;padding:0;background:var(--black);height:100%;width:100%;overflow:hidden;font-family:"DM Sans",sans-serif;color:var(--cream);}
+
+.video-container{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;}
+.shaka-video-container{width:100%;height:100%;position:relative;}
 video{width:100%;height:100%;object-fit:contain;background:#000;}
-.loading-overlay{position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#000;color:#fff;z-index:2000;font-size:14px;}
-.spinner{border:3px solid rgba(255,255,255,.2);border-top:3px solid #d8ff3e;border-radius:50%;width:36px;height:36px;animation:spin 1s linear infinite;margin-bottom:12px;}
+
+/* Top Action Bar for Custom Quality Switching */
+.player-top-bar{position:absolute;z-index:3000;top:15px;right:20px;display:flex;gap:10px;align-items:center;}
+.quality-trigger-btn{background:rgba(15,17,13,0.8);color:var(--lime);border:1px solid rgba(216,255,62,0.3);padding:8px 16px;border-radius:10px;cursor:pointer;font-weight:700;font-family:"Space Grotesk";font-size:11px;backdrop-filter:blur(10px);transition:.2s;}
+.quality-trigger-btn:hover{background:var(--lime);color:var(--black);}
+
+/* Quality Modal Styles */
+#qualityModal{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:99999;}
+#qualityModal.hidden{display:none;}
+.modal-content{width:90%;max-width:340px;background:var(--black2);border-radius:18px;padding:22px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.8);border:1px solid rgba(216,255,62,0.2);}
+.modal-content h2{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--cream);font-family:"Space Grotesk";}
+#qualityList{display:flex;flex-direction:column;gap:8px;max-height:250px;overflow-y:auto;}
+.quality-item{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600;color:var(--cream);display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:.2s;}
+.quality-item:hover,.quality-item.active{background:var(--lime);color:var(--black);border-color:var(--lime);}
+.modal-close-btn{margin-top:16px;background:rgba(255,255,255,0.06);color:var(--cream);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:.2s;}
+.modal-close-btn:hover{background:#ff725f;color:#fff;border-color:#ff725f;}
+
+.loading-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#000;color:#fff;z-index:2000;font-size:13px;}
+.spinner{border:3px solid rgba(255,255,255,.2);border-top:3px solid var(--lime);border-radius:50%;width:36px;height:36px;animation:spin 1s linear infinite;margin-bottom:12px;}
 @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
 </head>
 <body>
+
 <div class="video-container">
   <div class="shaka-video-container" data-shaka-player>
-    <video id="video" autoplay playsinline controls></video>
+    <video id="video" autoplay playsinline></video>
+    
+    <!-- Top Right Quality Button -->
+    <div class="player-top-bar">
+      <button class="quality-trigger-btn" onclick="openModal()">⚙ Quality</button>
+    </div>
+
     <div id="loading" class="loading-overlay">
       <div class="spinner"></div>
       Loading secure stream...
     </div>
   </div>
 </div>
+
+<!-- Quality Modal -->
+<div id="qualityModal" class="hidden">
+  <div class="modal-content">
+    <h2>Select Quality</h2>
+    <div id="qualityList"></div>
+    <button onclick="closeModal()" class="modal-close-btn">Close</button>
+  </div>
+</div>
+
 <script>
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get("data");
 let rawUrl = encoded ? atob(encoded) : "";
-
-// Agar proxy route kaam na kare toh direct raw URL ya proxy URL dono try honge
 const proxyUrl = 'proxy.js?u=' + encodeURIComponent(rawUrl);
+
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
+let shakaPlayer = null;
+let currentTracks = [];
 
 async function initPlayer(){
   if(!rawUrl){ alert("Stream URL missing"); return; }
   
-  // Loader ko 8 seconds se zyada nahi rukne denge, agar tab tak play na ho toh direct source set kar denge
-  const fallbackTimer = setTimeout(() => {
-    if(loading.style.display !== "none") {
-      console.warn("Shaka timeout, switching to direct/native fallback");
-      video.src = rawUrl;
-      video.play().catch(()=>{});
-      loading.style.display = "none";
-    }
-  }, 8000);
-
   try{
-    const player = new shaka.Player(video);
+    shakaPlayer = new shaka.Player(video);
     const container = document.querySelector(".shaka-video-container");
-    const ui = new shaka.ui.Overlay(player, container, video);
+    const ui = new shaka.ui.Overlay(shakaPlayer, container, video);
     
-    player.configure({
+    ui.configure({
+      controlPanelElements: ['play_pause', 'mute', 'time_and_duration', 'spacer', 'fullscreen', 'overflow_menu'],
+      addSeekBar: true
+    });
+
+    shakaPlayer.configure({
       streaming: { lowLatencyMode: true, bufferingGoal: 15 }
     });
 
-    await player.load(proxyUrl);
-    clearTimeout(fallbackTimer);
-    video.play().catch(()=>{ video.muted=true; video.play(); });
-    video.addEventListener("playing",()=>{ loading.style.display="none"; });
+    await shakaPlayer.load(proxyUrl);
+    
+    // Get available video tracks for quality selection
+    currentTracks = shakaPlayer.getVariantTracks().filter(t => t.type === 'video');
+    
+    video.play().catch(()=>{ video.muted = true; video.play(); });
+    video.addEventListener("playing", () => { loading.style.display = "none"; });
   }catch(e){
-    console.error("Player error, falling back:", e);
-    clearTimeout(fallbackTimer);
-    video.src = rawUrl;
+    console.error("Shaka error, falling back:", e);
+    video.src = proxyUrl;
     video.play().catch(()=>{});
-    video.addEventListener("playing",()=>{ loading.style.display="none"; });
+    video.addEventListener("playing", () => { loading.style.display = "none"; });
   }
 }
 
-video.addEventListener("playing", () => { loading.style.display = "none"; });
+function openModal(){
+  if(!shakaPlayer || currentTracks.length === 0){
+    alert("Qualities will appear once stream is fully active");
+    return;
+  }
+  const list = document.getElementById("qualityList");
+  list.innerHTML = "";
+
+  // Sort by resolution height descending
+  currentTracks.sort((a, b) => b.height - a.height);
+
+  currentTracks.forEach(track => {
+    const isCurrent = track.active;
+    const btn = document.createElement("div");
+    btn.className = `quality-item ${isCurrent ? 'active' : ''}`;
+    btn.innerHTML = `<span>${track.height}p</span><span>${isCurrent ? '●' : ''}</span>`;
+    btn.onclick = () => {
+      shakaPlayer.selectVariantTrack(track, true); // true for clear restriction/force
+      closeModal();
+    };
+    list.appendChild(btn);
+  });
+
+  document.getElementById("qualityModal").classList.remove("hidden");
+}
+
+function closeModal(){
+  document.getElementById("qualityModal").classList.add("hidden");
+}
+
 document.addEventListener("DOMContentLoaded", initPlayer);
 </script>
 </body>
