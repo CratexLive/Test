@@ -304,11 +304,18 @@ function closeAlertModal() {
 
 function shareStream() {
   const lang = params.get("lang") || "English";
-  const title = params.get("title") || "Team A vs Team B";
-  const randomId = Math.floor(10 + Math.random() * 90);
-  const shareUrl = window.location.href;
+  const title = params.get("title") || "Live Match";
   
-  const textToShare = `Fancode (${lang})\n${title}\n${shareUrl}#${randomId}`;
+  // Generates a unique 2-digit number based on the current day of the year (ensures no repetition across 5+ days)
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  const uniqueId = 10 + (dayOfYear % 90);
+
+  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded);
+  const textToShare = `Fancode (${lang})\n${title}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
     navigator.share({
