@@ -271,7 +271,6 @@ user-select:none;
 const urlParams = new URLSearchParams(window.location.search);
 const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
-const matchLang = urlParams.get("lang") || "English";
 let streamUrl = encoded ? atob(encoded) : "";
 
 const video = document.getElementById("video");
@@ -312,8 +311,8 @@ function shareStream() {
   const dayOfYear = Math.floor(diff / oneDay);
   const uniqueId = 10 + (dayOfYear % 90);
 
-  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded);
-  const textToShare = `Fancode (${matchLang})\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
+  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded) + "&title=" + encodeURIComponent(matchTitle);
+  const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
     navigator.share({
