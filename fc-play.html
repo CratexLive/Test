@@ -113,7 +113,7 @@ margin-bottom:12px;
   border-color: #3b82f6;
 }
 
-/* Toast Notification for Link Copied */
+/* Toast Notification */
 #toast {
   position: fixed;
   bottom: 40px;
@@ -268,8 +268,10 @@ user-select:none;
 
 <script>
 
-const params = new URLSearchParams(window.location.search);
-const encoded = params.get("data");
+const urlParams = new URLSearchParams(window.location.search);
+const encoded = urlParams.get("data");
+const matchTitle = urlParams.get("title") || "Live Match";
+const matchLang = urlParams.get("lang") || "English";
 let streamUrl = encoded ? atob(encoded) : "";
 
 const video = document.getElementById("video");
@@ -303,10 +305,6 @@ function closeAlertModal() {
 }
 
 function shareStream() {
-  const lang = params.get("lang") || "English";
-  const title = params.get("title") || "Live Match";
-  
-  // Generates a unique 2-digit number based on the current day of the year (ensures no repetition across 5+ days)
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const diff = now - start;
@@ -315,7 +313,7 @@ function shareStream() {
   const uniqueId = 10 + (dayOfYear % 90);
 
   const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded);
-  const textToShare = `Fancode (${lang})\n${title}\n${cleanUrl}#${uniqueId}`;
+  const textToShare = `Fancode (${matchLang})\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
     navigator.share({
