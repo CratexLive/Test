@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CricXCrate - FANCODE</title>
+<title>CRICXCRATE - LIVE</title>
 
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -215,9 +215,9 @@ margin-top:6px;
 <!-- HEADER -->
 <div class="text-center mt-4 mb-8">
   <div class="inline-flex items-center justify-center gap-3 bg-[#131d2f] py-3 px-7 rounded-full border border-blue-900/50">
-    <span class="text-3xl font-black tracking-tight text-white">Sportlink</span>
+    <span class="text-3xl font-black tracking-tight text-white">CricXCrate</span>
   </div>
-  <p class="text-gray-500 text-sm mt-3 tracking-wide">FANCODE LIVE WEB</p>
+  <p class="text-gray-500 text-sm mt-3 tracking-wide">LIVE STREAMING</p>
 </div>
 
 <!-- MATCH GRID -->
@@ -281,7 +281,6 @@ fetch(DATA_URL)
 
 function formatDate(time) {
   if (!time) return "";
-  // Try to parse "07:00:00 AM 10-09-2026" format
   const parts = time.match(/(\d{2}):(\d{2}):(\d{2})\s*(AM|PM)\s*(\d{2})-(\d{2})-(\d{4})/i);
   if (parts) {
     let [, hh, mm, ss, ampm, dd, mo, yyyy] = parts;
@@ -298,7 +297,6 @@ function formatDate(time) {
 
 function openQuality(index) {
   const match = allMatches[index];
-  // Use auto_streams: { ENGLISH: { streams: { "1080p": url, ... } } }
   const streams = match.auto_streams && match.auto_streams.ENGLISH && match.auto_streams.ENGLISH.streams;
   if (!streams || Object.keys(streams).length === 0) {
     alert("Stream not available");
@@ -308,7 +306,6 @@ function openQuality(index) {
   const list = document.getElementById("qualityList");
   list.innerHTML = "";
 
-  // Sort qualities high to low
   const order = ['1080p','720p','540p','480p','360p','240p'];
   const sortedKeys = Object.keys(streams).sort((a, b) => order.indexOf(b) - order.indexOf(a));
 
@@ -330,7 +327,6 @@ function closeQuality() {
   document.getElementById("qualityModal").classList.add("hidden");
 }
 </script>
-  <script async src="https://pl31358401.profitableratecpmnetwork.com/a3/81/41/a38141b4ff99f6ef8dbf9dc5f76bd86b.js"></script>
 
 </body>
 </html>
