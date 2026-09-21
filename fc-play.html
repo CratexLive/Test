@@ -20,7 +20,7 @@ video{width:100%;height:100%;object-fit:contain;background:#000;}
 <body>
 <div class="video-container">
   <div class="shaka-video-container" data-shaka-player>
-    <video id="video" autoplay playsinline muted></video>
+    <video id="video" autoplay playsinline controls></video>
     <div id="loading" class="loading-overlay">
       <div class="spinner"></div>
       Loading secure stream...
@@ -31,29 +31,48 @@ video{width:100%;height:100%;object-fit:contain;background:#000;}
 const params = new URLSearchParams(window.location.search);
 const encoded = params.get("data");
 let rawUrl = encoded ? atob(encoded) : "";
+
+// Agar proxy route kaam na kare toh direct raw URL ya proxy URL dono try honge
 const proxyUrl = 'proxy.js?u=' + encodeURIComponent(rawUrl);
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
 
 async function initPlayer(){
   if(!rawUrl){ alert("Stream URL missing"); return; }
+  
+  // Loader ko 8 seconds se zyada nahi rukne denge, agar tab tak play na ho toh direct source set kar denge
+  const fallbackTimer = setTimeout(() => {
+    if(loading.style.display !== "none") {
+      console.warn("Shaka timeout, switching to direct/native fallback");
+      video.src = rawUrl;
+      video.play().catch(()=>{});
+      loading.style.display = "none";
+    }
+  }, 8000);
+
   try{
     const player = new shaka.Player(video);
     const container = document.querySelector(".shaka-video-container");
     const ui = new shaka.ui.Overlay(player, container, video);
-    ui.configure({
-      controlPanelElements:['play_pause','mute','time_and_duration','spacer','quality','fullscreen','overflow_menu'],
-      addSeekBar:true
+    
+    player.configure({
+      streaming: { lowLatencyMode: true, bufferingGoal: 15 }
     });
+
     await player.load(proxyUrl);
+    clearTimeout(fallbackTimer);
     video.play().catch(()=>{ video.muted=true; video.play(); });
     video.addEventListener("playing",()=>{ loading.style.display="none"; });
   }catch(e){
-    video.src = proxyUrl;
-    video.play();
+    console.error("Player error, falling back:", e);
+    clearTimeout(fallbackTimer);
+    video.src = rawUrl;
+    video.play().catch(()=>{});
     video.addEventListener("playing",()=>{ loading.style.display="none"; });
   }
 }
+
+video.addEventListener("playing", () => { loading.style.display = "none"; });
 document.addEventListener("DOMContentLoaded", initPlayer);
 </script>
 </body>
