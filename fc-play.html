@@ -243,7 +243,7 @@ user-select:none;
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
-    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 mb-4 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
+    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
       <i class="fab fa-telegram text-xl"></i> JOIN NOW
     </a>
   </div>
@@ -269,39 +269,9 @@ user-select:none;
 <script>
 
 const urlParams = new URLSearchParams(window.location.search);
-const matchId = urlParams.get("id");
-const quality = urlParams.get("q") || "720p";
+const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
-let streamUrl = "";
-
-async function resolveStream() {
-  if (!matchId) {
-    alert("Match ID missing");
-    return;
-  }
-
-  try {
-    const res = await fetch('https://raw.githubusercontent.com/kajju027/Fancode-Events-Json/refs/heads/main/fancode.json');
-    const data = await res.json();
-    const matches = data.matches || [];
-
-    for (let m of matches) {
-      const streams = m.auto_streams && m.auto_streams.ENGLISH && m.auto_streams.ENGLISH.streams;
-      if (streams) {
-        for (let q in streams) {
-          if (streams[q].includes(matchId) && q === quality) {
-            streamUrl = streams[q];
-            initPlayer();
-            return;
-          }
-        }
-      }
-    }
-    alert("Stream not found or expired");
-  } catch(e) {
-    alert("Failed to load stream");
-  }
-}
+let streamUrl = encoded ? atob(encoded) : "";
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
@@ -311,7 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('telegramModal').classList.add('active');
   }, 200);
 
-  resolveStream();
+  initPlayer();
 });
 
 function handleCancel() {
@@ -341,8 +311,8 @@ function shareStream() {
   const dayOfYear = Math.floor(diff / oneDay);
   const uniqueId = 10 + (dayOfYear % 90);
 
-  const shortUrl = window.location.origin + window.location.pathname + `?id=${matchId}&q=${quality}&title=` + encodeURIComponent(matchTitle);
-  const textToShare = `Fancode (English)\n${matchTitle}\n${shortUrl}#${uniqueId}`;
+  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded) + "&title=" + encodeURIComponent(matchTitle);
+  const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
     navigator.share({
@@ -365,9 +335,14 @@ function showToast() {
 }
 
 async function initPlayer(){
-  if(!streamUrl) return;
+
+  if(!streamUrl){
+    alert("Stream URL missing");
+    return;
+  }
 
   try{
+
     const player = new shaka.Player(video);
     const container = document.querySelector(".shaka-video-container");
     const ui = new shaka.ui.Overlay(player, container, video);
@@ -406,14 +381,21 @@ async function initPlayer(){
       loading.style.display="none";
     });
 
-  } catch(e){
+  }
+
+  catch(e){
+
     console.log("Shaka error:",e);
+
     video.src = streamUrl;
     video.play();
+
     video.addEventListener("playing",()=>{
       loading.style.display="none";
     });
+
   }
+
 }
 
 </script>
