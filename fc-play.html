@@ -219,7 +219,7 @@ user-select:none;
     
     <!-- Floating Share Button -->
     <button onclick="shareStream()" class="share-btn-overlay">
-      <i class="fas fa-share-alt"></i> Share Stream
+      <i class="fas fa-share-alt"></i> Share
     </button>
 
     <div id="loading" class="loading-overlay">
@@ -230,7 +230,7 @@ user-select:none;
 </div>
 
 <!-- Toast Notification -->
-<div id="toast">Stream link copied to clipboard!</div>
+<div id="toast">Stream text copied to clipboard!</div>
 
 <!-- TELEGRAM JOIN MODAL -->
 <div id="telegramModal">
@@ -239,7 +239,7 @@ user-select:none;
       <i class="fas fa-times"></i>
     </button>
     <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30 transform hover:rotate-6 transition">
-      <i class="fab fa-telegram-plane">**</i>
+      <i class="fab fa-telegram-plane"></i>
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
@@ -303,16 +303,20 @@ function closeAlertModal() {
 }
 
 function shareStream() {
+  const lang = params.get("lang") || "English";
+  const title = params.get("title") || "Team A vs Team B";
+  const randomId = Math.floor(10 + Math.random() * 90);
   const shareUrl = window.location.href;
+  
+  const textToShare = `Fancode (${lang})\n${title}\n${shareUrl}#${randomId}`;
   
   if (navigator.share) {
     navigator.share({
       title: 'CRICXCRATE LIVE',
-      text: 'Watch this live match on CricXCrate!',
-      url: shareUrl,
+      text: textToShare,
     }).catch(() => {});
   } else {
-    navigator.clipboard.writeText(shareUrl).then(() => {
+    navigator.clipboard.writeText(textToShare).then(() => {
       showToast();
     });
   }
