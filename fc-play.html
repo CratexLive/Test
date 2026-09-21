@@ -205,7 +205,7 @@ user-select:none;
 
 <div class="video-container">
   <div class="shaka-video-container" data-shaka-player>
-    <video id="video" autoplay playsinline muted></video>
+    <video id="video" autoplay playsinline controls muted></video>
     
     <button onclick="shareStream()" class="share-btn-overlay">
       <i class="fas fa-share-alt"></i> Share
@@ -220,7 +220,6 @@ user-select:none;
 
 <div id="toast">Stream text copied to clipboard!</div>
 
-<!-- TELEGRAM JOIN MODAL -->
 <div id="telegramModal">
   <div class="modal-content">
     <button onclick="handleCancel()" class="close-btn"><i class="fas fa-times"></i></button>
@@ -235,7 +234,6 @@ user-select:none;
   </div>
 </div>
 
-<!-- SECOND POPUP (Zapak Alert Modal) -->
 <div id="alertModal">
   <div class="modal-content">
     <button onclick="closeAlertModal()" class="close-btn"><i class="fas fa-times"></i></button>
@@ -323,13 +321,17 @@ async function initPlayer(){
     return;
   }
 
-  // iOS / Safari Native Stream Fix
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   if (isIOS) {
     video.src = streamUrl;
     video.muted = true;
     video.play().catch(() => {});
+    
+    // Hide loader immediately on loadedmetadata or playing for iOS
+    video.addEventListener("loadedmetadata", () => {
+      loading.style.display = "none";
+    });
     video.addEventListener("playing", () => {
       loading.style.display = "none";
     });
