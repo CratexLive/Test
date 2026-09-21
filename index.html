@@ -2,21 +2,16 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>CRICXCRATE - LIVE</title>
 
 <!-- Google Font -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <!-- Tailwind -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
 <!-- FontAwesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 
 <style>
 body{
@@ -191,7 +186,6 @@ cursor:pointer;
 background:#dc2626;
 }
 
-/* Telegram Modal Modern Floating & 1s Fade Animations */
 #telegramModal {
   position: fixed;
   inset: 0;
@@ -247,7 +241,6 @@ margin-top:6px;
 
 <body class="p-5 max-w-7xl mx-auto">
 
-<!-- HEADER -->
 <div class="text-center mt-4 mb-8">
   <div class="inline-flex items-center justify-center gap-3 bg-[#131d2f] py-3 px-7 rounded-full border border-blue-900/50">
     <span class="text-3xl font-black tracking-tight text-white">CricXCrate</span>
@@ -255,10 +248,8 @@ margin-top:6px;
   <p class="text-gray-500 text-sm mt-3 tracking-wide">LIVE STREAMING</p>
 </div>
 
-<!-- MATCH GRID -->
 <div id="matches-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6"></div>
 
-<!-- QUALITY SELECTION MODAL -->
 <div id="qualityModal" class="hidden">
   <div class="modal-content">
     <h2>Select Quality</h2>
@@ -267,18 +258,17 @@ margin-top:6px;
   </div>
 </div>
 
-<!-- TELEGRAM JOIN MODAL -->
 <div id="telegramModal">
   <div class="modal-content">
-    <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30 transform hover:rotate-6 transition">
+    <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30">
       <i class="fab fa-telegram-plane"></i>
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
-    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 mb-4 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base">
+    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 mb-4 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
       <i class="fab fa-telegram text-xl"></i> JOIN NOW
     </a>
-    <button onclick="closeTelegramModal()" class="w-full text-gray-400 hover:text-white text-xs font-semibold py-2 tracking-wider uppercase transition">
+    <button onclick="closeTelegramModal()" class="w-full text-gray-400 hover:text-white text-xs font-semibold py-2 tracking-wider uppercase transition bg-transparent border-none cursor-pointer">
       I've joined
     </button>
   </div>
