@@ -383,14 +383,9 @@ function openQuality(index) {
     btn.className = "quality-item";
     btn.innerText = q;
     btn.onclick = function () {
-      const fullUrl = streams[q];
-      // Compress link by grabbing only the unique path identifier + query token if needed, or compress path
-      // To keep it super short, we pass the raw path segment identifier or use compression token
-      const matchIdMatch = fullUrl.match(/\/(\d+_[a-z]+_\d+)\//);
-      const shortToken = matchIdMatch ? matchIdMatch[1] + "_" + q : btoa(fullUrl).substring(0, 15);
-      
-      const matchTitle = encodeURIComponent(match.title || "Live Match");
-      window.location.href = `${PLAYER_URL}?s=${encodeURIComponent(shortToken)}&title=${matchTitle}&lang=English`;
+      const encoded = btoa(streams[q]);
+      const matchTitle = encodeURIComponent(match.title || "Match");
+      window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encoded)}&title=${matchTitle}`;
     };
     list.appendChild(btn);
   });
