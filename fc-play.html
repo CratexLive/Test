@@ -272,8 +272,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
 
-let rawStreamUrl = encoded ? atob(encoded) : "";
-let streamUrl = rawStreamUrl ? window.location.origin + "/?u=" + encodeURIComponent(rawStreamUrl) : "";
+let streamUrl = encoded ? atob(encoded) : "";
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
@@ -363,19 +362,11 @@ async function initPlayer(){
       addSeekBar:true
     });
 
-    // Optimized buffering config to prevent infinite loading/buffering
     player.configure({
       streaming:{
-        bufferingGoal: 5,
-        rebufferingGoal: 1,
-        bufferBehind: 15,
-        retryParameters: {
-          maxAttempts: 4,
-          baseDelay: 1000,
-          backoffFactor: 2,
-          fuzzFactor: 0.5,
-          timeout: 30000
-        }
+        bufferingGoal: 10,
+        rebufferingGoal: 2,
+        bufferBehind: 30
       }
     });
 
@@ -391,8 +382,7 @@ async function initPlayer(){
     });
 
   } catch(e) {
-    console.log("Shaka error, fallback to native:", e);
-    // Fallback directly to native video tag through proxy if shaka fails
+    console.log("Shaka error:", e);
     video.src = streamUrl;
     video.play().catch(() => {
       video.muted = true;
