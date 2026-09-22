@@ -2,22 +2,28 @@
 <html lang="en">
 
 <head>
+
 <meta charset="UTF-8">
 <title>CRICXCRATE LIVE</title>
+
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <!-- FONT -->
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <!-- Tailwind -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
 <!-- FontAwesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<!-- HLS.JS FOR SMOOTH PLAYBACK WITHOUT BUFFERING -->
-<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<!-- SHAKA PLAYER -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
 
 <style>
+
 html,body{
 margin:0;
 padding:0;
@@ -35,9 +41,11 @@ left:0;
 width:100%;
 height:100%;
 background:#000;
-display: flex;
-align-items: center;
-justify-content: center;
+}
+
+.shaka-video-container{
+width:100%;
+height:100%;
 }
 
 video{
@@ -57,22 +65,20 @@ display:flex;
 align-items:center;
 justify-content:center;
 flex-direction:column;
-background:linear-gradient(135deg, #0a0f1c 0%, #131d2f 100%);
+background:#000;
 color:#fff;
 z-index:2000;
 font-size:18px;
-padding: 20px;
-text-align: center;
 }
 
 .spinner{
-border:4px solid rgba(59, 130, 246, 0.2);
+border:4px solid rgba(255,255,255,.2);
 border-top:4px solid #3b82f6;
 border-radius:50%;
-width:45px;
-height:45px;
+width:40px;
+height:40px;
 animation:spin 1s linear infinite;
-margin-bottom:16px;
+margin-bottom:12px;
 }
 
 @keyframes spin{
@@ -80,44 +86,7 @@ margin-bottom:16px;
 100%{transform:rotate(360deg)}
 }
 
-.offline-card {
-  background: rgba(19, 29, 47, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  border-radius: 28px;
-  padding: 32px 24px;
-  max-width: 380px;
-  width: 90%;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.15);
-  animation: floatCard 4s ease-in-out infinite;
-}
-
-@keyframes floatCard {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-8px); }
-}
-
-.offline-icon {
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 16px;
-  font-size: 26px;
-  color: #fff;
-  box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
-  animation: pulseGlow 2s infinite;
-}
-
-@keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
-  50% { box-shadow: 0 0 0 14px rgba(37, 99, 235, 0); }
-}
-
+/* Custom Share Button Overlay */
 .share-btn-overlay {
   position: absolute;
   top: 20px;
@@ -144,6 +113,7 @@ margin-bottom:16px;
   border-color: #3b82f6;
 }
 
+/* Toast Notification */
 #toast {
   position: fixed;
   bottom: 40px;
@@ -166,6 +136,7 @@ margin-bottom:16px;
   opacity: 1;
 }
 
+/* Telegram Modal Modern Floating & 1s Fade Animations */
 #telegramModal, #alertModal {
   position: fixed;
   inset: 0;
@@ -235,114 +206,81 @@ margin-bottom:16px;
 user-select:none;
 -webkit-tap-highlight-color: transparent;
 }
+
 </style>
+
 </head>
 
 <body>
 
 <div class="video-container">
-  <video id="video" autoplay playsinline controls muted></video>
-  
-  <button onclick="shareStream()" class="share-btn-overlay">
-    <i class="fas fa-share-alt"></i> Share
-  </button>
+  <div class="shaka-video-container" data-shaka-player>
+    <video id="video" autoplay playsinline muted></video>
+    
+    <!-- Floating Share Button -->
+    <button onclick="shareStream()" class="share-btn-overlay">
+      <i class="fas fa-share-alt"></i> Share
+    </button>
 
-  <div id="loading" class="loading-overlay">
-    <div id="spinner-box" class="spinner"></div>
-    <div id="status-content">
-      <h3 class="text-lg font-semibold text-white mb-1">Loading Stream</h3>
-      <p class="text-gray-400 text-sm">Please wait a moment...</p>
+    <div id="loading" class="loading-overlay">
+      <div class="spinner"></div>
+      Analyzing the video...
     </div>
   </div>
 </div>
 
+<!-- Toast Notification -->
 <div id="toast">Stream text copied to clipboard!</div>
 
+<!-- TELEGRAM JOIN MODAL -->
 <div id="telegramModal">
   <div class="modal-content">
-    <button onclick="handleCancel()" class="close-btn"><i class="fas fa-times"></i></button>
-    <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30">
+    <button onclick="handleCancel()" class="close-btn">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="relative w-16 h-16 bg-gradient-to-tr from-blue-600 to-blue-400 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-blue-500/30 transform hover:rotate-6 transition">
       <i class="fab fa-telegram-plane"></i>
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
-    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-xl shadow-blue-600/30 text-base no-underline">
+    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
       <i class="fab fa-telegram text-xl"></i> JOIN NOW
     </a>
   </div>
 </div>
 
+<!-- SECOND POPUP (Zapak Alert Modal) -->
 <div id="alertModal">
   <div class="modal-content">
-    <button onclick="closeAlertModal()" class="close-btn"><i class="fas fa-times"></i></button>
+    <button onclick="closeAlertModal()" class="close-btn">
+      <i class="fas fa-times"></i>
+    </button>
     <div class="relative w-16 h-16 bg-gradient-to-tr from-red-600 to-orange-500 text-white rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl shadow-lg shadow-red-500/30">
       <i class="fas fa-exclamation-triangle"></i>
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Channel Required</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">You must join our Telegram channel to watch the match without interruptions!</p>
-    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 shadow-xl shadow-blue-600/30 text-base no-underline">
+    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
       <i class="fab fa-telegram text-xl"></i> JOIN NOW
     </a>
   </div>
 </div>
 
 <script>
+
 const urlParams = new URLSearchParams(window.location.search);
-const encodedData = urlParams.get("data");
-const encodedTitle = urlParams.get("t");
-const encodedTime = urlParams.get("time");
+const encoded = urlParams.get("data");
+const matchTitle = urlParams.get("title") || "Live Match";
 
-let streamUrl = "";
-let matchTitle = "Live Match";
-let matchTime = "Soon";
-
-try {
-  if (encodedData) streamUrl = atob(encodedData);
-} catch (e) {
-  streamUrl = encodedData ? decodeURIComponent(encodedData) : "";
-}
-
-try {
-  if (encodedTitle) matchTitle = decodeURIComponent(atob(encodedTitle));
-} catch (e) {
-  matchTitle = "Live Match";
-}
-
-try {
-  if (encodedTime) matchTime = decodeURIComponent(atob(encodedTime));
-} catch (e) {
-  matchTime = encodedTime ? decodeURIComponent(encodedTime) : "Soon";
-}
+let streamUrl = encoded ? atob(encoded) : "";
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
-const spinnerBox = document.getElementById("spinner-box");
 
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.getElementById('telegramModal').classList.add('active');
   }, 200);
-
-  if (!streamUrl) {
-    spinnerBox.style.display = "none";
-    loading.innerHTML = `
-      <div class="offline-card">
-        <div class="offline-icon">
-          <i class="fas fa-hourglass-half"></i>
-        </div>
-        <h3 class="text-xl font-bold text-white mb-1">Match Starting Soon</h3>
-        <p class="text-gray-300 text-xs mb-3 font-medium">${matchTitle}</p>
-        <div class="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/40 px-4 py-1.5 rounded-full text-blue-300 text-xs font-bold mb-4">
-          <i class="far fa-clock"></i> Starts at: ${matchTime}
-        </div>
-        <p class="text-gray-400 text-xs leading-relaxed mb-5">We kindly request you to stay tuned with us. The stream will go live shortly!</p>
-        <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 text-xs no-underline transition transform active:scale-95">
-          <i class="fab fa-telegram text-base"></i> Join for Updates & Links
-        </a>
-      </div>
-    `;
-    return;
-  }
 
   initPlayer();
 });
@@ -374,13 +312,7 @@ function shareStream() {
   const dayOfYear = Math.floor(diff / oneDay);
   const uniqueId = 10 + (dayOfYear % 90);
 
-  let cleanUrl = window.location.origin + window.location.pathname;
-  let params = [];
-  if (encodedData) params.push("data=" + encodeURIComponent(encodedData));
-  if (encodedTitle) params.push("t=" + encodeURIComponent(encodedTitle));
-  if (encodedTime) params.push("time=" + encodeURIComponent(encodedTime));
-  if (params.length > 0) cleanUrl += "?" + params.join("&");
-
+  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded) + "&title=" + encodeURIComponent(matchTitle);
   const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
@@ -403,52 +335,66 @@ function showToast() {
   }, 2500);
 }
 
-function initPlayer() {
-  if (!streamUrl) return;
+async function initPlayer(){
 
-  if (Hls.isSupported()) {
-    const hls = new Hls({
-      maxBufferLength: 30,
-      maxMaxBufferLength: 60,
-      liveSyncDurationCount: 3,
-      lowLatencyMode: true,
+  if(!streamUrl){
+    alert("Stream URL missing");
+    return;
+  }
+
+  try{
+    const player = new shaka.Player(video);
+    const container = document.querySelector(".shaka-video-container");
+    const ui = new shaka.ui.Overlay(player, container, video);
+
+    ui.configure({
+      controlPanelElements:[
+        'play_pause',
+        'mute',
+        'time_and_duration',
+        'spacer',
+        'quality',
+        'language',
+        'picture_in_picture',
+        'fullscreen',
+        'overflow_menu'
+      ],
+      addSeekBar:true
     });
-    hls.loadSource(streamUrl);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play().catch(() => {
-        video.muted = true;
-        video.play();
-      });
-      loading.style.display = "none";
-    });
-    hls.on(Hls.Events.ERROR, (event, data) => {
-      if (data.fatal) {
-        switch (data.type) {
-          case Hls.ErrorTypes.NETWORK_ERROR:
-            hls.startLoad();
-            break;
-          case Hls.ErrorTypes.MEDIA_ERROR:
-            hls.recoverMediaError();
-            break;
-          default:
-            hls.destroy();
-            break;
-        }
+
+    player.configure({
+      streaming:{
+        bufferingGoal: 10,
+        rebufferingGoal: 2,
+        bufferBehind: 30
       }
     });
-  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-    // Native Safari / iOS support
+
+    await player.load(streamUrl);
+
+    video.play().catch(()=>{
+      video.muted = true;
+      video.play();
+    });
+
+    video.addEventListener("playing", () => {
+      loading.style.display = "none";
+    });
+
+  } catch(e) {
+    console.log("Shaka error:", e);
     video.src = streamUrl;
-    video.addEventListener('loadedmetadata', () => {
-      video.play().catch(() => {
-        video.muted = true;
-        video.play();
-      });
+    video.play().catch(() => {
+      video.muted = true;
+      video.play();
+    });
+    video.addEventListener("playing", () => {
       loading.style.display = "none";
     });
   }
+
 }
+
 </script>
 
 </body>
