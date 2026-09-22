@@ -90,7 +90,7 @@ margin-bottom:16px;
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(59, 130, 246, 0.25);
   border-radius: 28px;
-  padding: 36px 28px;
+  padding: 32px 24px;
   max-width: 380px;
   width: 90%;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.15);
@@ -103,15 +103,15 @@ margin-bottom:16px;
 }
 
 .offline-icon {
-  width: 68px;
-  height: 68px;
+  width: 60px;
+  height: 60px;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border-radius: 22px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  font-size: 28px;
+  margin: 0 auto 16px;
+  font-size: 26px;
   color: #fff;
   box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
   animation: pulseGlow 2s infinite;
@@ -296,9 +296,11 @@ user-select:none;
 const urlParams = new URLSearchParams(window.location.search);
 const encodedData = urlParams.get("data");
 const encodedTitle = urlParams.get("t");
+const timeParam = urlParams.get("time");
 
 let streamUrl = "";
 let matchTitle = "Live Match";
+let startTime = timeParam ? decodeURIComponent(timeParam) : "";
 
 try {
   if (encodedData) streamUrl = atob(encodedData);
@@ -314,7 +316,6 @@ try {
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
-const statusContent = document.getElementById("status-content");
 const spinnerBox = document.getElementById("spinner-box");
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -324,16 +325,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!streamUrl) {
     spinnerBox.style.display = "none";
+    
+    let timeDisplay = startTime ? `<div class="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/40 px-4 py-1.5 rounded-full text-blue-300 text-xs font-bold mb-4"><i class="far fa-clock"></i> Starts at: ${startTime}</div>` : '';
+
     loading.innerHTML = `
       <div class="offline-card">
         <div class="offline-icon">
-          <i class="fas fa-clock"></i>
+          <i class="fas fa-hourglass-half"></i>
         </div>
-        <h3 class="text-xl font-bold text-white mb-2">Match Starting Soon</h3>
-        <p class="text-gray-300 text-sm leading-relaxed mb-4">This stream is not live yet. We kindly request you to stay tuned and hang around with us!</p>
-        <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/30 px-4 py-2 rounded-full text-blue-400 text-xs font-semibold">
-          <i class="fas fa-circle text-[8px] animate-pulse"></i> Stay tuned for updates
-        </div>
+        <h3 class="text-xl font-bold text-white mb-1">Match Starting Soon</h3>
+        <p class="text-gray-300 text-xs mb-3 font-medium">${matchTitle}</p>
+        ${timeDisplay}
+        <p class="text-gray-400 text-xs leading-relaxed mb-5">We kindly request you to stay tuned with us. The stream will go live shortly!</p>
+        <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30 text-xs no-underline transition transform active:scale-95">
+          <i class="fab fa-telegram text-base"></i> Join for Updates & Links
+        </a>
       </div>
     `;
     return;
@@ -373,6 +379,7 @@ function shareStream() {
   let params = [];
   if (encodedData) params.push("data=" + encodeURIComponent(encodedData));
   if (encodedTitle) params.push("t=" + encodeURIComponent(encodedTitle));
+  if (startTime) params.push("time=" + encodeURIComponent(startTime));
   if (params.length > 0) cleanUrl += "?" + params.join("&");
 
   const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
