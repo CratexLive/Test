@@ -100,10 +100,25 @@ cursor:pointer;
 background:#1d4ed8;
 }
 
-.not-live{
+.share-upcoming-btn{
 background:#334155;
-cursor:not-allowed;
-pointer-events:none;
+border-radius:50px;
+padding:10px;
+font-weight:600;
+font-size:13px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+margin-top:8px;
+cursor:pointer;
+color:#cbd5e1;
+transition:.2s;
+}
+
+.share-upcoming-btn:hover{
+background:#475569;
+color:#fff;
 }
 
 #qualityModal{
@@ -223,6 +238,28 @@ background:#dc2626;
   transform: translateY(0) scale(1);
 }
 
+#toast {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #10b981;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  z-index: 3000;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
 *{
 -webkit-user-select:none;
 -moz-user-select:none;
@@ -250,6 +287,8 @@ margin-top:6px;
 
 <div id="matches-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6"></div>
 
+<div id="toast">Match link copied to clipboard!</div>
+
 <div id="qualityModal" class="hidden">
   <div class="modal-content">
     <h2>Select Quality</h2>
@@ -265,7 +304,7 @@ margin-top:6px;
     </div>
     <h2 class="text-2xl font-bold text-white mb-2">Join Our Telegram</h2>
     <p class="text-gray-400 text-sm mb-7 leading-relaxed">Join our official Telegram channel for instant match links and updates!</p>
-    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 mb-4 transition transform active:scale-95 shadow-xl shadow-blue-600/30 text-base no-underline">
+    <a href="https://t.me/+_pLB6Lxkr_tkM2I1" target="_blank" class="w-full bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2.5 mb-4 shadow-xl shadow-blue-600/30 text-base no-underline">
       <i class="fab fa-telegram text-xl"></i> JOIN NOW
     </a>
     <button onclick="closeTelegramModal()" class="w-full text-gray-400 hover:text-white text-xs font-semibold py-2 tracking-wider uppercase transition bg-transparent border-none cursor-pointer">
@@ -315,6 +354,17 @@ fetch(DATA_URL)
       const img = m.image || "https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg";
       const card = document.createElement("div");
       card.className = "match-tile";
+      
+      let actionButtons = "";
+      if (isLive) {
+        actionButtons = `<div onclick="openQuality(${index})" class="watch-btn"><i class="fas fa-play"></i> WATCH NOW</div>`;
+      } else {
+        actionButtons = `
+          <div class="watch-btn not-live"><i class="far fa-clock"></i> NOT LIVE</div>
+          <div onclick="shareUpcoming(${index})" class="share-upcoming-btn"><i class="fas fa-share-alt"></i> Share Match</div>
+        `;
+      }
+
       card.innerHTML = `
         <div class="img-wrapper">
           <img src="${img}" class="match-img">
@@ -326,9 +376,7 @@ fetch(DATA_URL)
           <h3 class="text-xl font-bold">${m.title || 'Match'}</h3>
           <div class="text-sm text-gray-400 mt-2">${m.tournament || ''}</div>
           <div class="match-time">${formatDate(m.startTime)}</div>
-          ${isLive
-            ? `<div onclick="openQuality(${index})" class="watch-btn"><i class="fas fa-play"></i> WATCH NOW</div>`
-            : `<div class="watch-btn not-live"><i class="far fa-clock"></i> NOT LIVE</div>`}
+          <div class="mt-auto pt-3">${actionButtons}</div>
         </div>
       `;
       container.appendChild(card);
@@ -352,6 +400,41 @@ function formatDate(time) {
   const d = new Date(time);
   if (isNaN(d)) return time;
   return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+function shareUpcoming(index) {
+  const match = allMatches[index];
+  const matchTitle = match.title || "Upcoming Match";
+  
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now - start;
+  const oneDay = 1000 * 60 * 60 * 24;
+  const dayOfYear = Math.floor(diff / oneDay);
+  const uniqueId = 10 + (dayOfYear % 90);
+
+  const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
+  const targetUrl = `${baseUrl}${PLAYER_URL}?title=${encodeURIComponent(matchTitle)}`;
+  const textToShare = `Fancode (English)\n${matchTitle}\n${targetUrl}#${uniqueId}`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: 'CRICXCRATE LIVE',
+      text: textToShare,
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(textToShare).then(() => {
+      showToast();
+    });
+  }
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2500);
 }
 
 function openQuality(index) {
