@@ -405,6 +405,7 @@ function formatDate(time) {
 function shareUpcoming(index) {
   const match = allMatches[index];
   const matchTitle = match.title || "Upcoming Match";
+  const formattedTime = formatDate(match.startTime);
   
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
@@ -414,8 +415,9 @@ function shareUpcoming(index) {
   const uniqueId = 10 + (dayOfYear % 90);
 
   const encodedTitle = btoa(encodeURIComponent(matchTitle));
+  const encodedTime = btoa(encodeURIComponent(formattedTime));
   const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
-  const targetUrl = `${baseUrl}${PLAYER_URL}?t=${encodedTitle}`;
+  const targetUrl = `${baseUrl}${PLAYER_URL}?t=${encodedTitle}&time=${encodedTime}`;
   const textToShare = `Fancode (English)\n${matchTitle}\n${targetUrl}#${uniqueId}`;
 
   if (navigator.share) {
@@ -459,7 +461,9 @@ function openQuality(index) {
     btn.onclick = function () {
       const encodedStream = btoa(streams[q]);
       const encodedTitle = btoa(encodeURIComponent(match.title || "Match"));
-      window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encodedStream)}&t=${encodedTitle}`;
+      const formattedTime = formatDate(match.startTime);
+      const encodedTime = btoa(encodeURIComponent(formattedTime));
+      window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encodedStream)}&t=${encodedTitle}&time=${encodedTime}`;
     };
     list.appendChild(btn);
   });
