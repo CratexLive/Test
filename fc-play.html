@@ -250,14 +250,22 @@ user-select:none;
 
 <script>
 const urlParams = new URLSearchParams(window.location.search);
-const encoded = urlParams.get("data");
-const matchTitle = urlParams.get("title") || "Live Match";
+const encodedData = urlParams.get("data");
+const encodedTitle = urlParams.get("t");
+
 let streamUrl = "";
+let matchTitle = "Live Match";
 
 try {
-  streamUrl = encoded ? atob(encoded) : "";
-} catch (err) {
-  streamUrl = encoded ? decodeURIComponent(encoded) : "";
+  if (encodedData) streamUrl = atob(encodedData);
+} catch (e) {
+  streamUrl = encodedData ? decodeURIComponent(encodedData) : "";
+}
+
+try {
+  if (encodedTitle) matchTitle = decodeURIComponent(atob(encodedTitle));
+} catch (e) {
+  matchTitle = "Live Match";
 }
 
 const video = document.getElementById("video");
@@ -305,7 +313,12 @@ function shareStream() {
   const dayOfYear = Math.floor(diff / oneDay);
   const uniqueId = 10 + (dayOfYear % 90);
 
-  const cleanUrl = window.location.origin + window.location.pathname + (encoded ? "?data=" + encodeURIComponent(encoded) : "") + "&title=" + encodeURIComponent(matchTitle);
+  let cleanUrl = window.location.origin + window.location.pathname;
+  let params = [];
+  if (encodedData) params.push("data=" + encodeURIComponent(encodedData));
+  if (encodedTitle) params.push("t=" + encodeURIComponent(encodedTitle));
+  if (params.length > 0) cleanUrl += "?" + params.join("&");
+
   const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
