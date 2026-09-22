@@ -213,7 +213,7 @@ user-select:none;
 
     <div id="loading" class="loading-overlay">
       <div class="spinner"></div>
-      Analyzing the video...
+      <span id="loading-text">Analyzing the video...</span>
     </div>
   </div>
 </div>
@@ -252,15 +252,28 @@ user-select:none;
 const urlParams = new URLSearchParams(window.location.search);
 const encoded = urlParams.get("data");
 const matchTitle = urlParams.get("title") || "Live Match";
-let streamUrl = encoded ? atob(encoded) : "";
+let streamUrl = "";
+
+try {
+  streamUrl = encoded ? atob(encoded) : "";
+} catch (err) {
+  streamUrl = encoded ? decodeURIComponent(encoded) : "";
+}
 
 const video = document.getElementById("video");
 const loading = document.getElementById("loading");
+const loadingText = document.getElementById("loading-text");
 
 document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.getElementById('telegramModal').classList.add('active');
   }, 200);
+
+  if (!streamUrl) {
+    loadingText.innerText = "Match is not live yet!";
+    document.querySelector(".spinner").style.display = "none";
+    return;
+  }
 
   initPlayer();
 });
@@ -292,7 +305,7 @@ function shareStream() {
   const dayOfYear = Math.floor(diff / oneDay);
   const uniqueId = 10 + (dayOfYear % 90);
 
-  const cleanUrl = window.location.origin + window.location.pathname + "?data=" + encodeURIComponent(encoded) + "&title=" + encodeURIComponent(matchTitle);
+  const cleanUrl = window.location.origin + window.location.pathname + (encoded ? "?data=" + encodeURIComponent(encoded) : "") + "&title=" + encodeURIComponent(matchTitle);
   const textToShare = `Fancode (English)\n${matchTitle}\n${cleanUrl}#${uniqueId}`;
   
   if (navigator.share) {
@@ -316,25 +329,25 @@ function showToast() {
 }
 
 async function initPlayer(){
-  if(!streamUrl){
-    alert("Stream URL missing");
-    return;
-  }
+  if(!streamUrl) return;
 
   const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-  if (isIOS) {
+  if (isIOS || video.canPlayType('application/vnd.apple.mpegurl')) {
     video.src = streamUrl;
     video.muted = true;
     video.play().catch(() => {});
-    
-    // Hide loader immediately on loadedmetadata or playing for iOS
+
     video.addEventListener("loadedmetadata", () => {
       loading.style.display = "none";
     });
     video.addEventListener("playing", () => {
       loading.style.display = "none";
     });
+    
+    setTimeout(() => {
+      loading.style.display = "none";
+    }, 3000);
     return;
   }
 
@@ -358,14 +371,6 @@ async function initPlayer(){
       addSeekBar:true
     });
 
-    player.configure({
-      streaming:{
-        bufferingGoal: 10,
-        rebufferingGoal: 2,
-        bufferBehind: 30
-      }
-    });
-
     await player.load(streamUrl);
 
     video.play().catch(()=>{
@@ -378,7 +383,7 @@ async function initPlayer(){
     });
 
   } catch(e) {
-    console.log("Shaka error:", e);
+    console.log("Shaka error, falling back to native:", e);
     video.src = streamUrl;
     video.play().catch(() => {
       video.muted = true;
