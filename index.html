@@ -352,6 +352,7 @@ fetch(DATA_URL)
     matches.forEach((m, index) => {
       const isLive = (m.status || "").toUpperCase() === "LIVE";
       const img = m.image || "https://www.fancode.com/skillup-uploads/cms-media/Cricket_Fallback_Old_match-card.jpg";
+      const exactTime = m.startTime || "Soon";
       const card = document.createElement("div");
       card.className = "match-tile";
       
@@ -375,7 +376,7 @@ fetch(DATA_URL)
         <div class="p-5 flex flex-col flex-1">
           <h3 class="text-xl font-bold">${m.title || 'Match'}</h3>
           <div class="text-sm text-gray-400 mt-2">${m.tournament || ''}</div>
-          <div class="match-time">${formatDate(m.startTime)}</div>
+          <div class="match-time"><i class="far fa-clock text-blue-400 mr-1"></i> ${exactTime}</div>
           <div class="mt-auto pt-3">${actionButtons}</div>
         </div>
       `;
@@ -386,26 +387,10 @@ fetch(DATA_URL)
     container.innerHTML = "<p class='text-center col-span-full'>Failed to load matches</p>";
   });
 
-function formatDate(time) {
-  if (!time) return "";
-  const parts = time.match(/(\d{2}):(\d{2}):(\d{2})\s*(AM|PM)\s*(\d{2})-(\d{2})-(\d{4})/i);
-  if (parts) {
-    let [, hh, mm, ss, ampm, dd, mo, yyyy] = parts;
-    hh = parseInt(hh, 10);
-    if (ampm.toUpperCase() === 'PM' && hh < 12) hh += 12;
-    if (ampm.toUpperCase() === 'AM' && hh === 12) hh = 0;
-    const d = new Date(yyyy, parseInt(mo, 10) - 1, parseInt(dd, 10), hh, parseInt(mm, 10), parseInt(ss, 10));
-    return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-  }
-  const d = new Date(time);
-  if (isNaN(d)) return time;
-  return d.toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-}
-
 function shareUpcoming(index) {
   const match = allMatches[index];
   const matchTitle = match.title || "Upcoming Match";
-  const formattedTime = formatDate(match.startTime);
+  const exactTime = match.startTime || "Coming Soon";
   
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
@@ -415,7 +400,7 @@ function shareUpcoming(index) {
   const uniqueId = 10 + (dayOfYear % 90);
 
   const encodedTitle = btoa(encodeURIComponent(matchTitle));
-  const encodedTime = btoa(encodeURIComponent(formattedTime));
+  const encodedTime = btoa(encodeURIComponent(exactTime));
   const baseUrl = window.location.origin + window.location.pathname.replace('index.html', '');
   const targetUrl = `${baseUrl}${PLAYER_URL}?t=${encodedTitle}&time=${encodedTime}`;
   const textToShare = `Fancode (English)\n${matchTitle}\n${targetUrl}#${uniqueId}`;
@@ -461,8 +446,8 @@ function openQuality(index) {
     btn.onclick = function () {
       const encodedStream = btoa(streams[q]);
       const encodedTitle = btoa(encodeURIComponent(match.title || "Match"));
-      const formattedTime = formatDate(match.startTime);
-      const encodedTime = btoa(encodeURIComponent(formattedTime));
+      const exactTime = match.startTime || "Soon";
+      const encodedTime = btoa(encodeURIComponent(exactTime));
       window.location.href = `${PLAYER_URL}?data=${encodeURIComponent(encodedStream)}&t=${encodedTitle}&time=${encodedTime}`;
     };
     list.appendChild(btn);
