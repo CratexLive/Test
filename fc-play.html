@@ -14,9 +14,8 @@
 <!-- FontAwesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<!-- SHAKA PLAYER -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.ui.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/controls.min.css">
+<!-- HLS.JS FOR SMOOTH PLAYBACK WITHOUT BUFFERING -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
 <style>
 html,body{
@@ -36,11 +35,9 @@ left:0;
 width:100%;
 height:100%;
 background:#000;
-}
-
-.shaka-video-container{
-width:100%;
-height:100%;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
 video{
@@ -83,7 +80,6 @@ margin-bottom:16px;
 100%{transform:rotate(360deg)}
 }
 
-/* Animated offline card */
 .offline-card {
   background: rgba(19, 29, 47, 0.75);
   backdrop-filter: blur(16px);
@@ -245,19 +241,17 @@ user-select:none;
 <body>
 
 <div class="video-container">
-  <div class="shaka-video-container" data-shaka-player>
-    <video id="video" autoplay playsinline controls muted></video>
-    
-    <button onclick="shareStream()" class="share-btn-overlay">
-      <i class="fas fa-share-alt"></i> Share
-    </button>
+  <video id="video" autoplay playsinline controls muted></video>
+  
+  <button onclick="shareStream()" class="share-btn-overlay">
+    <i class="fas fa-share-alt"></i> Share
+  </button>
 
-    <div id="loading" class="loading-overlay">
-      <div id="spinner-box" class="spinner"></div>
-      <div id="status-content">
-        <h3 class="text-lg font-semibold text-white mb-1">Loading Stream</h3>
-        <p class="text-gray-400 text-sm">Please wait a moment...</p>
-      </div>
+  <div id="loading" class="loading-overlay">
+    <div id="spinner-box" class="spinner"></div>
+    <div id="status-content">
+      <h3 class="text-lg font-semibold text-white mb-1">Loading Stream</h3>
+      <p class="text-gray-400 text-sm">Please wait a moment...</p>
     </div>
   </div>
 </div>
@@ -331,7 +325,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (!streamUrl) {
     spinnerBox.style.display = "none";
-    
     loading.innerHTML = `
       <div class="offline-card">
         <div class="offline-icon">
@@ -410,68 +403,48 @@ function showToast() {
   }, 2500);
 }
 
-async function initPlayer(){
-  if(!streamUrl) return;
+function initPlayer() {
+  if (!streamUrl) return;
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-
-  if (isIOS || video.canPlayType('application/vnd.apple.mpegurl')) {
+  if (Hls.isSupported()) {
+    const hls = new Hls({
+      maxBufferLength: 30,
+      maxMaxBufferLength: 60,
+      liveSyncDurationCount: 3,
+      lowLatencyMode: true,
+    });
+    hls.loadSource(streamUrl);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      video.play().catch(() => {
+        video.muted = true;
+        video.play();
+      });
+      loading.style.display = "none";
+    });
+    hls.on(Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls.recoverMediaError();
+            break;
+          default:
+            hls.destroy();
+            break;
+        }
+      }
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    // Native Safari / iOS support
     video.src = streamUrl;
-    video.muted = true;
-    video.play().catch(() => {});
-
-    video.addEventListener("loadedmetadata", () => {
-      loading.style.display = "none";
-    });
-    video.addEventListener("playing", () => {
-      loading.style.display = "none";
-    });
-    
-    setTimeout(() => {
-      loading.style.display = "none";
-    }, 3000);
-    return;
-  }
-
-  try{
-    const player = new shaka.Player(video);
-    const container = document.querySelector(".shaka-video-container");
-    const ui = new shaka.ui.Overlay(player, container, video);
-
-    ui.configure({
-      controlPanelElements:[
-        'play_pause',
-        'mute',
-        'time_and_duration',
-        'spacer',
-        'quality',
-        'language',
-        'picture_in_picture',
-        'fullscreen',
-        'overflow_menu'
-      ],
-      addSeekBar:true
-    });
-
-    await player.load(streamUrl);
-
-    video.play().catch(()=>{
-      video.muted = true;
-      video.play();
-    });
-
-    video.addEventListener("playing", () => {
-      loading.style.display = "none";
-    });
-
-  } catch(e) {
-    console.log("Shaka error, falling back to native:", e);
-    video.src = streamUrl;
-    video.play().catch(() => {
-      video.muted = true;
-      video.play();
-    });
-    video.addEventListener("playing", () => {
+    video.addEventListener('loadedmetadata', () => {
+      video.play().catch(() => {
+        video.muted = true;
+        video.play();
+      });
       loading.style.display = "none";
     });
   }
